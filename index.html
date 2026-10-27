@@ -15,7 +15,7 @@
  * axes: light/grotesk-heavy/warm · posture: full-bleed stage · contrast: pass · fold: pass · brand: kznmarket.ru tiles (colours sampled from the user's screenshots 2026-10-27) · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H5 E5 S5 R4 V4 · weakest: P, no archive photographs; every location is built from tiles, slots for real footage named in the hand-off */
 
-/* layout: one fixed WebGL stage; a highlight (year and one line) sits bottom-left, controls top-right, a year rail along the bottom; a single light look in the brand's grey, chosen on purpose */
+/* layout: one fixed WebGL stage; a big highlight (the date first, the line a beat later) lands in a different corner at each stop, controls top-right; a single light look in the brand's grey, chosen on purpose */
 :root {
   color-scheme: light;
   --color-paper: #e9e9e6;
@@ -48,8 +48,8 @@
 
   --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
   --text-sm: 0.9375rem; --text-md: 1.0625rem; --text-lg: 1.25rem;
-  --text-year: clamp(4.5rem, 13vw, 12rem);
-  --text-line: clamp(1.35rem, 2.6vw, 2.4rem);
+  --text-year: clamp(5rem, 18vw, 17rem);
+  --text-line: clamp(1.9rem, 5.2vw, 4.8rem);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 700ms;
   --container: 1600px;
@@ -103,34 +103,28 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .wordmark i b:nth-child(2n) { background: var(--color-tomato); }
 .wordmark i b:nth-child(5) { background: var(--color-green-deep); }
 .tools { pointer-events: auto; display: flex; gap: var(--space-2xs); }
-.hud::before { content: ""; position: absolute; left: 0; bottom: 0; width: min(100%, 60rem); height: 70%; background: radial-gradient(ellipse at 0% 100%, var(--color-scrim) 0%, var(--color-scrim) 35%, transparent 70%); }
 
-.highlight { position: absolute; left: max(var(--space-xl), env(safe-area-inset-left, 0px)); bottom: calc(112px + env(safe-area-inset-bottom, 0px)); max-width: min(46rem, calc(100% - 2 * var(--space-lg))); display: grid; gap: var(--space-sm); }
+.highlight { position: absolute; display: grid; gap: var(--space-sm); max-width: min(56rem, calc(100% - 2 * var(--space-lg))); text-shadow: 0 0 0.3em var(--color-paper), 0 0 0.9em var(--color-paper); }
+.highlight[data-pos="bl"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); }
+.highlight[data-pos="br"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); justify-items: end; text-align: right; }
+.highlight[data-pos="tl"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); top: calc(88px + env(safe-area-inset-top, 0px)); }
+.highlight[data-pos="tr"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); top: calc(88px + env(safe-area-inset-top, 0px)); justify-items: end; text-align: right; }
 .highlight__year { font-family: var(--font-display); font-size: var(--text-year); line-height: 0.82; letter-spacing: -0.035em; color: var(--color-ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.highlight__line { font-family: var(--font-display); font-size: var(--text-line); line-height: 1.05; color: var(--color-ink); max-width: 18ch; }
-.highlight__line mark { background: var(--color-accent); color: var(--color-accent-ink); padding: 0 0.18em; }
+.highlight__line { font-family: var(--font-display); font-size: var(--text-line); line-height: 1.02; color: var(--color-ink); max-width: 14ch; text-wrap: balance; }
+.highlight__line mark { background: var(--color-accent); color: var(--color-accent-ink); padding: 0 0.18em; text-shadow: none; }
 .highlight > * { transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out); }
 .highlight.is-out > * { opacity: 0; transform: translateY(18px); }
-.highlight .highlight__line { transition-delay: 140ms; }
-.highlight.is-out .highlight__line { transition-delay: 0ms; }
+.highlight.is-late .highlight__line { opacity: 0; transform: translateY(18px); }
+.highlight.is-out.is-late .highlight__line { transition-delay: 0ms; }
 
-.hint { position: absolute; right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(112px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: var(--space-sm); background: var(--color-paper-2); padding: var(--space-sm) var(--space-md); font-weight: 500; font-size: var(--text-sm); }
+.hint { position: absolute; right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: var(--space-sm); background: var(--color-paper-2); padding: var(--space-sm) var(--space-md); font-weight: 500; font-size: var(--text-sm); }
 .hint[hidden] { display: none; }
 .hint__tiles { display: grid; gap: var(--space-3xs); }
 .hint__tiles b { width: 8px; height: 8px; background: var(--color-tomato); animation: hint 1.4s var(--ease-out) infinite; }
 .hint__tiles b:nth-child(2) { animation-delay: 0.15s; background: var(--color-ochre); } .hint__tiles b:nth-child(3) { animation-delay: 0.3s; background: var(--color-green); }
 @keyframes hint { 0%, 100% { opacity: 0.25; transform: translateY(-3px); } 50% { opacity: 1; transform: translateY(3px); } }
-.caption { position: absolute; left: 50%; bottom: calc(112px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(calc(100% - 32px), 44rem); background: var(--color-ink); color: var(--color-paper); padding: var(--space-sm) var(--space-md); font-size: var(--text-md); line-height: 1.45; text-align: center; }
+.caption { position: absolute; left: 50%; bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(calc(100% - 32px), 44rem); background: var(--color-ink); color: var(--color-paper); padding: var(--space-sm) var(--space-md); font-size: var(--text-md); line-height: 1.45; text-align: center; }
 
-.rail { pointer-events: auto; position: absolute; left: 0; right: 0; bottom: env(safe-area-inset-bottom, 0px); padding-block: var(--space-md) var(--space-lg); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); }
-.rail ol { list-style: none; margin: 0 auto; padding: 0; max-width: var(--container); display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: var(--space-3xs); }
-.rail button { appearance: none; width: 100%; border: 0; background: transparent; cursor: pointer; padding: 0 0 var(--space-2xs); display: grid; gap: var(--space-xs); text-align: left; color: var(--color-ink-2); font-size: 0.8125rem; font-weight: 500; font-variant-numeric: tabular-nums; transition: color var(--dur-short) var(--ease-out); }
-.rail button::before { content: ""; height: 6px; background: var(--color-tile); }
-.rail button:hover { color: var(--color-ink); }
-.rail button.is-past::before { background: var(--color-ink); }
-.rail button[aria-current="true"] { color: var(--color-ink); }
-.rail button[aria-current="true"]::before { background: var(--color-tomato); }
-.rail button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; transition: none; }
 
 /* veil: start and end cards */
 .veil { position: fixed; inset: 0; z-index: var(--z-veil); display: none; align-items: center; padding-block: var(--space-2xl); padding-left: max(var(--space-xl), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-xl), env(safe-area-inset-right, 0px)); background: linear-gradient(90deg, var(--color-scrim) 0%, var(--color-scrim) 40%, transparent 75%); transition: opacity var(--dur-long) var(--ease-out); }
@@ -156,9 +150,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .fallback li b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; }
 
 @media (max-width: 760px) {
-  .highlight { left: max(var(--space-md), env(safe-area-inset-left, 0px)); bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
-  .rail button { font-size: 0; gap: 0; }
-  .rail button::before { height: 8px; }
+  .highlight[data-pos="bl"], .highlight[data-pos="tl"] { left: max(var(--space-md), env(safe-area-inset-left, 0px)); }
+  .highlight[data-pos="br"], .highlight[data-pos="tr"] { right: max(var(--space-md), env(safe-area-inset-right, 0px)); }
   .tools .lbl { display: none; }
   .veil { align-items: flex-end; background: linear-gradient(0deg, var(--color-scrim) 0%, var(--color-scrim) 55%, transparent 90%); }
   .veil dl div { grid-template-columns: 7rem minmax(0, 1fr); }
@@ -167,6 +160,14 @@ a { color: inherit; text-underline-offset: 0.18em; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+.icon-btn .snd { display: block; width: 24px; height: 24px; fill: currentColor; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.icon-btn .snd .snd__cone { fill: currentColor; stroke: none; }
+.icon-btn .snd .snd__on, .icon-btn .snd .snd__off { fill: none; }
+#soundBtn[aria-pressed="true"] .snd__off, #soundBtn[aria-pressed="false"] .snd__on { display: none; }
+.is-speaking #soundBtn .snd__on path { animation: wave 0.9s var(--ease-out) infinite alternate; }
+.is-speaking #soundBtn .snd__on path:nth-child(2) { animation-delay: -0.45s; }
+@keyframes wave { from { opacity: 0.35; } to { opacity: 1; } }
+.confetti { position: fixed; inset: 0; z-index: 150; width: 100%; height: 100%; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -179,18 +180,19 @@ a { color: inherit; text-underline-offset: 0.18em; }
   <div class="hud__top">
     <a class="wordmark" href="https://kznmarket.ru/" target="_blank" rel="noopener"><i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i><span>Московский рынок</span></a>
     <div class="tools">
-      <button class="icon-btn" id="soundBtn" type="button" aria-pressed="false" aria-label="Звук"><span class="eq" aria-hidden="true"><span></span><span></span><span></span></span><span class="lbl">Звук</span></button>
+      <button class="icon-btn" id="soundBtn" type="button" aria-pressed="false" aria-label="Звук"><svg class="snd" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path class="snd__cone" d="M4 9.5h3.6L12.5 5v14l-4.9-4.5H4z"/><g class="snd__on"><path d="M15.6 9.2a4 4 0 0 1 0 5.6"/><path d="M18.2 6.6a7.6 7.6 0 0 1 0 10.8"/></g><g class="snd__off"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g></svg></button>
       <button class="icon-btn" id="ccBtn" type="button" aria-pressed="false" aria-label="Субтитры"><span aria-hidden="true">CC</span></button>
           </div>
   </div>
-  <div class="highlight is-out" id="highlight" aria-live="polite">
-    <div class="highlight__year" id="hlYear">50</div>
-    <div class="highlight__line" id="hlLine">Полвека под одним куполом</div>
+  <div class="highlight is-out is-late" id="highlight" aria-live="polite">
+    <div class="highlight__year" id="hlYear"></div>
+    <div class="highlight__line" id="hlLine"></div>
   </div>
   <div class="caption" id="caption" hidden></div>
   <div class="hint" id="hint" hidden><span class="hint__tiles" aria-hidden="true"><b></b><b></b><b></b></span>Крутите вниз, чтобы лететь</div>
-  <nav class="rail" aria-label="Локации"><ol id="rail"></ol></nav>
 </div>
+
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
 
 <div class="veil" id="startVeil">
   <div class="veil__in">
@@ -209,11 +211,11 @@ a { color: inherit; text-underline-offset: 0.18em; }
     <h1>Приходите под купол</h1>
     <dl>
       <div><dt>Адрес</dt><dd>Казань, улица Шамиля Усманова, 1</dd></div>
-      <div><dt>Продавцы</dt><dd>каждый день с 8:00 до 20:00</dd></div>
-      <div><dt>Кухни бистро</dt><dd>каждый день с 8:00 до 21:00</dd></div>
+      <div><dt>Продавцы</dt><dd>с 8:00 до 20:00</dd></div>
+      <div><dt>Кухни бистро</dt><dd>с 8:00 до 21:00</dd></div>
     </dl>
     <div class="veil__actions">
-      <button class="btn" id="againBtn" type="button">Пролететь ещё раз</button>
+      <button class="btn" id="againBtn" type="button">Ещё раз</button>
       <a class="btn btn--ghost" href="https://kznmarket.ru/" target="_blank" rel="noopener">Сайт рынка</a>
     </div>
   </div>
@@ -238,39 +240,39 @@ a { color: inherit; text-underline-offset: 0.18em; }
 'use strict';
 /* ================= story ================= */
 const STORY = [
-  { id: 'fifty', year: '50', line: 'Полвека под одним куполом',
-    audio: 'audio/00-fifty.mp3?v=2',
-    say: 'Московский рынок Казани. Полвека под одним куполом. Сейчас мы пролетим сквозь его историю: от первой рыночной площадки тысяча девятьсот тридцатого года до юбилея в две тысячи двадцать шестом.' },
-  { id: 'field', year: '1930', line: 'Первая рыночная площадка',
-    audio: 'audio/01-1930.mp3?v=2',
+  { id: 'fifty', year: '', line: '', pos: 'bl',
+    audio: 'audio/00-fifty.mp3?v=3', dur: 9.5,
+    say: 'Московский рынок Казани. Полвека под одним куполом. Давайте пронесёмся сквозь его историю: от первой рыночной площадки до полувекового юбилея.' },
+  { id: 'field', year: '1930', line: 'Первая рыночная площадка', pos: 'bl',
+    audio: 'audio/01-1930.mp3?v=3', dur: 13.9,
     say: 'Тысяча девятьсот тридцатый год. Между улицами Энергетиков и Декабристов впервые открывается рыночная площадка. Сегодня у этого места адрес: улица Шамиля Усманова, дом один. Отсюда начинается Волгоградская улица.' },
-  { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>',
-    audio: 'audio/02-1976.mp3?v=2',
-    say: 'Тысяча девятьсот семьдесят шестой. Здесь вырастает крытое здание: лабаз с парусным сводом. В его основе стандартный советский проект, похожий свод был и у Чеховского рынка. Купольный силуэт становится главной приметой, и казанцы связывают его с образом тюбетейки. Открывается колхозный рынок Московского района.' },
-  { id: 'hall', year: 'СССР', line: 'Рынок на четыре района',
-    audio: 'audio/03-hall.mp3?v=2',
-    say: 'С самого открытия здесь продают продукты, одежду и бытовые товары. Рынок обслуживает жителей Московского, Кировского, Ново-Савиновского и Авиастроительного районов и быстро становится одним из крупнейших в Казани, наравне с Центральным и Приволжским. Это не только место торговли, но и часть повседневной жизни района.' },
-  { id: 'maze', year: '1990-е', line: '<mark>13</mark> хозяев и лабиринт павильонов',
-    audio: 'audio/04-1990.mp3?v=2',
-    say: 'Девяностые. Город распродаёт торговые площадки предпринимателям, и со временем здесь появляется тринадцать частных торговых объектов. Вокруг крытого здания вырастают вещевые и продуктовые павильоны. Рынок, как многие крупные торговые точки страны, оказывается в зоне влияния криминальных структур. А лабиринты павильонов становятся частью городской памяти: в них было легко заблудиться. Некоторые продавцы работали здесь не одно десятилетие.' },
-  { id: 'crowd', year: '2000', line: 'Тесно, но открыто',
-    audio: 'audio/05-2000.mp3?v=2',
-    say: 'Двухтысячные. Павильоны расширяют и реконструируют, но рынок по-прежнему перегружен. Обсуждают новый рынок в Ново-Савиновском районе. В две тысячи шестом плотная застройка и санитарные нормы грозят закрытием, но рынок продолжает работу. В две тысячи восьмом он занимает второе место в городском конкурсе рынков, а его управляющую компанию признают лучшей. В две тысячи десятом по улице Энергетиков проходит девятый трамвай. А в две тысячи одиннадцатом ярмарку на рынке посещает Рустам Минниханов.' },
-  { id: 'bars', year: '2013', line: 'На торгах: <mark>250</mark>, потом 175 млн',
-    audio: 'audio/06-2013.mp3?v=2',
+  { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>', pos: 'tl',
+    audio: 'audio/02-1976.mp3?v=3', dur: 21,
+    say: 'Тысяча девятьсот семьдесят шестой — год официального открытия колхозного рынка Московского района. Здесь вырастает крытое здание: лабаз с парусным сводом. В его основе стандартный советский проект. Похожий свод был и у Чеховского рынка. Купольный силуэт становится главной приметой, и казанцы связывают его с образом тюбетейки.' },
+  { id: 'hall', year: 'СССР', line: 'Рынок на четыре района', pos: 'br',
+    audio: 'audio/03-hall.mp3?v=3', dur: 19.9,
+    say: 'С самого открытия здесь продают продукты, одежду и бытовые товары. Рынок обслуживает жителей Московского, Кировского, Ново-Савиновского и Авиастроительного районов и быстро становится одним из крупнейших в Казани, наравне с Центральным и Приволжским. Это не только место торговли, но и часть повседневной жизни горожан.' },
+  { id: 'maze', year: '1990-е', line: 'Лабиринт павильонов', pos: 'tr',
+    audio: 'audio/04-1990.mp3?v=3', dur: 21.5,
+    say: 'Девяностые. Город распродаёт торговые площадки предпринимателям, и со временем здесь появляется тринадцать частных торговых объектов. Вокруг крытого здания вырастают вещевые и продуктовые павильоны. Эти лабиринты становятся частью городской памяти: в них было легко заблудиться. Некоторые продавцы работали здесь не одно десятилетие.' },
+  { id: 'crowd', year: '2000', line: 'Расширяют павильоны', pos: 'bl',
+    audio: 'audio/05-2000.mp3?v=3', dur: 27.2,
+    say: 'Двухтысячные. Павильоны расширяют и реконструируют, но рынок по-прежнему перегружен. Обсуждают новый рынок в Ново-Савиновском районе. В две тысячи шестом плотная застройка и санитарные нормы грозят закрытием, но рынок продолжает работу. В две тысячи восьмом он занимает второе место в городском конкурсе рынков, а его управляющую компанию признают лучшей. В две тысячи десятом по улице Энергетиков проходит девятый трамвай.' },
+  { id: 'bars', year: '2013', line: 'Рынок выставляют на торги', pos: 'tl',
+    audio: 'audio/06-2013.mp3?v=3', dur: 14.5,
     say: 'Две тысячи тринадцатый. Рынок впервые выставляют на торги за двести пятьдесят миллионов рублей. В две тысячи пятнадцатом стартовую цену снижают до ста семидесяти пяти миллионов. В две тысячи двадцатом его снова выставляют на торги.' },
-  { id: 'blueprint', year: '2022', line: 'Новый владелец и новый чертёж',
-    audio: 'audio/07-2022.mp3?v=2',
-    say: 'Март две тысячи двадцать второго. Объект уходит с аукциона со значительным дисконтом: московское ООО «Казантик» предпринимателя Валерия Аржинта покупает рынок за сто семьдесят пять миллионов рублей. Концепцию обновления разрабатывает команда холдинга Гинза Проджект, который обновлял Даниловский рынок в Москве. Архитектурный проект делает петербургское бюро Да Бюро. Почти пятьдесят лет здание не знало капитального ремонта.' },
-  { id: 'scaffold', year: '2023', line: 'Купол перекладывают заново',
-    audio: 'audio/08-2023.mp3?v=2',
+  { id: 'blueprint', year: '2022', line: 'Новый владелец и новые планы', pos: 'br',
+    audio: 'audio/07-2022.mp3?v=3', dur: 26.8,
+    say: 'Март две тысячи двадцать второго. Объект уходит с аукциона со значительным дисконтом — московский предприниматель покупает рынок за сто семьдесят пять миллионов рублей. В планах — перезапуск рынка. Почти пятьдесят лет здание не знало капитального ремонта. Концепцию обновления разрабатывает команда холдинга Гинза Проджект, который обновлял Даниловский рынок в Москве. Архитектурный проект делает петербургское бюро Да Бюро.' },
+  { id: 'scaffold', year: '2023', line: 'Начало реконструкции', pos: 'tr',
+    audio: 'audio/08-2023.mp3?v=3', dur: 22.6,
     say: 'Май две тысячи двадцать третьего: начинается масштабная реконструкция. В сентябре исторический лабаз закрывают, торговцам предлагают павильоны на территории базара. Обновляют коммуникации, меняют витражи и покрытие купола, укрепляют и расширяют антресоли. Появляются вентиляция, кондиционирование, новые витрины, склады и ветеринарная лаборатория.' },
-  { id: 'opening', year: '2025', line: '<mark>300</mark> мест в бистро под куполом',
-    audio: 'audio/09-2025.mp3?v=2',
-    say: 'Двадцатое мая две тысячи двадцать пятого. Обновлённый рынок открывается в тестовом режиме: фермерские ряды, открытые кухни городских бистро на триста мест, зоны отдыха. Внутри около ста пятидесяти торговых мест, на улице ещё около двухсот. Вокруг амфитеатр, общественная теплица, ярмарочные ряды и зелень. Двадцать восьмого ноября проходит официальное открытие с участием Рустама Минниханова и мэра Казани Ильсура Метшина.' },
-  { id: 'gold', year: '2026', line: 'Пятьдесят лет, каждый день',
-    audio: 'audio/10-2026.mp3?v=2',
-    say: 'Две тысячи двадцать шестой. Московскому рынку пятьдесят лет. Он работает каждый день: продавцы с восьми утра до восьми вечера, кухни бистро до девяти. Приходите под купол.' }
+  { id: 'opening', year: '2025', line: 'Рынок открыт заново', pos: 'tl',
+    audio: 'audio/09-2025.mp3?v=3', dur: 26.1,
+    say: 'Двадцатое мая две тысячи двадцать пятого. Обновлённый рынок открывается в тестовом режиме: фермерские ряды, открытые кухни городских бистро на триста мест, зоны отдыха. Внутри около ста пятидесяти торговых мест, на улице ещё около двухсот. Вокруг амфитеатр, общественная теплица, ярмарочные ряды и зелень. Двадцать восьмого ноября проходит официальное открытие с участием руководства республики и города.' },
+  { id: 'gold', year: '2026', line: 'Каждый день. 50 лет', pos: 'bl',
+    audio: 'audio/10-2026.mp3?v=3', dur: 12.7,
+    say: 'Две тысячи двадцать шестой. Московскому рынку пятьдесят лет, и только что он получил вторую жизнь. Каждый день с восьми утра здесь открыты двери для любителей свежих продуктов и вкусной разнообразной кухни.' }
 ];
 
 const canvas = document.getElementById('world');
@@ -316,19 +318,15 @@ function textMask(txt, w, h) {
   const d = g.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 110 ? 1 : 0;
   if (txt === '50') {
-    // hand-built block digits so the 5 never reads as a 6: open gaps top-right and bottom-left
-    m.fill(0);
-    const BW = 64, BH = 30, bm = new Uint8Array(BW * BH);
-    const box = (r0, r1, c0, c1) => { for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) bm[r * BW + c] = 1; };
-    box(1, 6, 4, 29); box(1, 15, 4, 10); box(11, 17, 4, 28); box(11, 25, 23, 29); box(23, 28, 5, 28);
-    for (const [r, c] of [[1, 4], [1, 29], [11, 29], [28, 5], [28, 28], [17, 4]]) bm[r * BW + c] = 0;
-    const cx = 47.5, cy = (BH + 1) / 2 - 0.5;
-    for (let r = 0; r < BH; r++) for (let c = 33; c < 62; c++) {
-      const o = Math.pow(Math.abs(c - cx) / 14, 3) + Math.pow(Math.abs(r - cy) / 14, 3);
-      const n = Math.pow(Math.abs(c - cx) / 8.2, 3) + Math.pow(Math.abs(r - cy) / 8.6, 3);
-      if (o <= 1 && n > 1) bm[r * BW + c] = 1;
-    }
-    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) m[r * w + c] = bm[Math.min(BH - 1, (r * BH / h) | 0) * BW + Math.min(BW - 1, (c * BW / w) | 0)];
+    /* the 5 must not read as a 6: open the bowl on the left and cut a slit under the top bar on the right */
+    const colHas = c => { for (let r = 0; r < h; r++) if (m[r * w + c]) return true; return false; };
+    let c0 = 0; while (c0 < w && !colHas(c0)) c0++;
+    let c1 = c0; while (c1 < w && colHas(c1)) c1++; c1--;
+    let r0 = h, r1 = 0; for (let r = 0; r < h; r++) for (let c = c0; c <= c1; c++) if (m[r * w + c]) { r0 = Math.min(r0, r); r1 = Math.max(r1, r); }
+    const gh = r1 - r0 + 1, gw = c1 - c0 + 1;
+    const clear = (fa, fb, ca, cb) => { for (let r = r0 + Math.round(gh * fa); r < r0 + Math.round(gh * fb); r++) for (let c = c0 + Math.round(gw * ca); c <= c0 + Math.round(gw * cb); c++) m[r * w + c] = 0; };
+    clear(0.54, 0.67, -0.1, 0.4);
+    clear(0.33, 0.42, 0.5, 1.1);
   }
   // holes: empty cells not reachable from the border
   const reach = new Uint8Array(w * h), q = [];
@@ -669,19 +667,21 @@ function activeIndex(s) {
 }
 const hl = document.getElementById('highlight'), hlYear = document.getElementById('hlYear'), hlLine = document.getElementById('hlLine');
 let hlTimer = 0, hlShown = -1, narrTimer = 0;
-function showHighlight(i) { if (hlShown === i && !hl.classList.contains('is-out')) return; hlShown = i; hl.classList.add('is-out'); clearTimeout(hlTimer); hlTimer = setTimeout(() => { hlYear.textContent = STORY[i].year; hlLine.innerHTML = STORY[i].line; hl.classList.remove('is-out'); }, 300); }
-function hideHighlight() { clearTimeout(hlTimer); hl.classList.add('is-out'); }
+let hlLate = 0;
+function showHighlight(i) {
+  if (hlShown === i || endShown) return; hlShown = i;
+  hl.classList.add('is-out', 'is-late'); clearTimeout(hlTimer); clearTimeout(hlLate);
+  const st = STORY[i]; if (!st.year && !st.line) return;
+  hlTimer = setTimeout(() => { hlYear.textContent = st.year; hlLine.innerHTML = st.line; hl.dataset.pos = st.pos || 'bl'; hl.classList.remove('is-out'); hlLate = setTimeout(() => hl.classList.remove('is-late'), 1300); }, 350);
+}
+function hideHighlight() { clearTimeout(hlTimer); clearTimeout(hlLate); hl.classList.add('is-out', 'is-late'); hlShown = -1; }
 function setLocation(i) {
-  if (i === cur) return; cur = i; setEra(i); updateRail();
+  if (i === cur) return; cur = i; setEra(i);
   clearTimeout(narrTimer); stopNarration();
   if (soundOn) narrTimer = setTimeout(() => { if (cur === i) narrate(i); }, 550);
 }
 function scrollToS(s) { window.scrollTo({ top: Math.round(s * unit()), behavior: reduce.matches ? 'auto' : 'smooth' }); }
 
-const rail = document.getElementById('rail');
-STORY.forEach((s, i) => { const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button'; const name = s.year === '50' ? 'Начало' : s.year; b.textContent = name; b.setAttribute('aria-label', name); b.addEventListener('click', () => { begin(soundOn); const g = segs.find(x => x.kind === 'dwell' && x.i === i); if (g) scrollToS(g.a + 0.02); }); li.appendChild(b); rail.appendChild(li); });
-const railBtns = [...rail.querySelectorAll('button')];
-function updateRail() { railBtns.forEach((b, i) => { b.setAttribute('aria-current', String(i === cur)); b.classList.toggle('is-past', i < cur); }); }
 const startVeil = document.getElementById('startVeil'), endVeil = document.getElementById('endVeil'), hint = document.getElementById('hint');
 const soundBtn = document.getElementById('soundBtn'), ccBtn = document.getElementById('ccBtn');
 function setSound(on) { soundOn = on; soundBtn.setAttribute('aria-pressed', String(on)); if (on) { unlockAudio(); padLevel(0.05); } else { if (unlockEl) unlockEl.pause(); stopNarration(); padLevel(0); } }
@@ -692,13 +692,30 @@ function begin(withSound) {
 }
 document.getElementById('startBtn').addEventListener('click', () => begin(true));
 document.getElementById('silentBtn').addEventListener('click', () => begin(false));
-document.getElementById('againBtn').addEventListener('click', () => scrollToS(0));
+document.getElementById('againBtn').addEventListener('click', () => { window.scrollTo(0, 0); sTarget = sVis = sPrev = 0; });
 soundBtn.addEventListener('click', () => { setSound(!soundOn); if (soundOn) narrate(Math.max(0, cur)); });
 ccBtn.addEventListener('click', () => { capOn = !capOn; ccBtn.setAttribute('aria-pressed', String(capOn)); caption(capText); });
 let endShown = false;
 function showEnd() { if (endShown) return; endShown = true; hideHighlight(); endVeil.hidden = false; endVeil.classList.remove('is-leaving'); }
 function hideEnd() { if (!endShown) return; endShown = false; endVeil.classList.add('is-leaving'); setTimeout(() => { if (!endShown) endVeil.hidden = true; }, 600); }
 addEventListener('scroll', () => { sTarget = scrollY / unit(); if (!started && sTarget > 0.02) begin(false); if (sTarget > 0.12) hint.hidden = true; }, { passive: true });
+
+/* ================= confetti: falls from the top at the finale ================= */
+const cvs = document.getElementById('confetti'), cctx = cvs.getContext('2d');
+const CONF_COLORS = ['#c64e2a', '#ca9043', '#487455', '#4450a0', '#e0b85a', '#a03f1e', '#32306c', '#f0d9a8'];
+let confetti = [], confettiOn = false, confAcc = 0;
+function sizeConfetti() { const r = Math.min(2, devicePixelRatio || 1); cvs.width = Math.round(innerWidth * r); cvs.height = Math.round(innerHeight * r); cctx.setTransform(r, 0, 0, r, 0, 0); }
+sizeConfetti(); addEventListener('resize', sizeConfetti);
+function confettiStep(dt) {
+  if (confettiOn && !reduce.matches) { confAcc += dt * Math.min(90, innerWidth / 14); while (confAcc >= 1 && confetti.length < 420) { confAcc--; confetti.push({ x: Math.random() * innerWidth, y: -20 - Math.random() * 60, w: 7 + Math.random() * 7, h: 12 + Math.random() * 9, vy: 120 + Math.random() * 150, sw: 14 + Math.random() * 30, ph: Math.random() * 6.28, sp: 1.5 + Math.random() * 3, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 6, c: CONF_COLORS[(Math.random() * CONF_COLORS.length) | 0] }); } } else confAcc = 0;
+  if (!confetti.length) { if (cvs.dataset.dirty) { cctx.clearRect(0, 0, innerWidth, innerHeight); delete cvs.dataset.dirty; } return; }
+  cctx.clearRect(0, 0, innerWidth, innerHeight); cvs.dataset.dirty = '1';
+  for (let i = confetti.length - 1; i >= 0; i--) {
+    const p = confetti[i]; p.y += p.vy * dt; p.ph += p.sp * dt; p.rot += p.vr * dt;
+    if (p.y > innerHeight + 30) { confetti.splice(i, 1); continue; }
+    cctx.save(); cctx.translate(p.x + Math.sin(p.ph) * p.sw, p.y); cctx.rotate(p.rot); cctx.scale(1, Math.cos(p.ph * 1.7)); cctx.fillStyle = p.c; cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); cctx.restore();
+  }
+}
 
 /* ================= render loop ================= */
 const baseFov = () => innerWidth / innerHeight < 0.8 ? 72 : 55;
@@ -722,7 +739,14 @@ const tmpC = new THREE.Color(), camPos = new THREE.Vector3(), camLook = new THRE
 let last = performance.now(), fovKick = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  sVis = reduce.matches ? sTarget : sVis + (sTarget - sVis) * (1 - Math.exp(-dt * 5));
+  if (reduce.matches) sVis = sTarget; else {
+    /* pace: the camera may not cross a location faster than its narration plays, so picture and voice stay together */
+    const g = segs.find(x => sVis >= x.a && sVis < x.b), pace = soundOn ? 0.9 : 0.45;
+    const secs = g ? (g.kind === 'dwell' ? (STORY[g.i].dur || 14) * pace : 3.6) : 3;
+    const maxStep = ((g ? g.b - g.a : 0.35) / secs) * dt;
+    const want = (sTarget - sVis) * (1 - Math.exp(-dt * 3.5));
+    sVis += Math.max(-maxStep, Math.min(maxStep, want));
+  }
   const vel = Math.abs(sVis - sPrev) / Math.max(dt, 0.001); sPrev = sVis;
   const st = fFromS(sVis); f = st.f;
   const transit = st.seg.kind === 'transit' && st.t > 0.02 && st.t < 0.98;
@@ -730,6 +754,8 @@ function frame(now) {
   inTransit = transit;
   const act = activeIndex(sVis);
   if (act.near) { setLocation(act.i); showHighlight(act.i); } else hideHighlight();
+  const finale = (act.near && act.i === STORY.length - 1) || endShown;
+  confettiOn = finale; dust.visible = !finale; confettiStep(dt);
   const lastSeg = segs[segs.length - 1];
   if (sVis > lastSeg.b - 0.04) showEnd(); else hideEnd();
   for (const L of LOC) if (!L.assembled && !L.assembling && f > L.start - 3 && f < L.end + 1) L.assembling = now;
