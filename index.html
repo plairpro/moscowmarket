@@ -486,12 +486,23 @@ const builders = {
   },
   bars(add) {
     for (let x = -24; x <= 24; x++) for (let z = -12; z <= 14; z++) add(x, 0, z, (x + z) % 2 ? 'P' : 'W', 0.94, 0.25, 0.94);
-    const tower = (cx, h, a, b, ghost) => { for (let y = 0; y < h; y++) for (let x = 0; x < 4; x++) for (let z = 0; z < 4; z++) {
-      const ex = x === 0 || x === 3, ez = z === 0 || z === 3; if (!ex && !ez) continue;
-      if (ghost && !(ex && ez) && y % 4) continue;
-      add(cx + x - 1.5, 0.6 + y, z - 1.5, ghost ? 'P' : (hash(x + cx, y, z) > 0.75 ? b : a), 0.92, 0.92, 0.92); } };
-    tower(-8, 25, 'O', 'D', false); tower(0, 17.5, 'o', 'y', false); tower(8, 17.5, 'P', 'P', true);
-    return { cams: [[[0, 2.5, 34], [0, 15, 0]], [[-16, 27, 20], [-8, 24, 0]], [[12, 19, 18], [0, 17, 0]]] };
+    /* coin stacks: round voxel discs piled up, the sale prices as heights (250 and 175 million, then an empty ghost stack for the re-listing) */
+    const CELLS = []; for (let x = -2; x <= 2; x++) for (let z = -2; z <= 2; z++) if (Math.abs(x) + Math.abs(z) < 4) CELLS.push([x, z]);
+    const stack = (cx, cz, n, kA, kB, kTop, ghost, seed) => {
+      for (let k = 0; k < n; k++) {
+        const jx = (hash(k, seed, 1) - 0.5) * 0.3, jz = (hash(k, seed, 2) - 0.5) * 0.3, y = 0.5 + k * 0.55, top = k === n - 1;
+        for (const [x, z] of CELLS) {
+          const inner = x * x + z * z <= 2;
+          if (inner && !top) continue;
+          if (ghost && !top && (k % 3 || (x + z) % 2)) continue;
+          const key = ghost ? 'P' : top ? (x === 0 && z === 0 ? 'D' : kTop) : ((x + z + k) & 1 ? kA : kB);
+          add(cx + x + jx, y, cz + z + jz, key, 0.96, 0.5, 0.96);
+        }
+      }
+    };
+    stack(-9, 0, 46, 'y', 'D', 'L', false, 1); stack(0, 0, 32, 'y', 'o', 'L', false, 2); stack(9, 0, 32, 'P', 'W', 'W', true, 3);
+    for (let i = 0; i < 9; i++) { const ang = i * 2.4, r = 9 + (i % 3) * 3.5, h = 1 + (i * 5) % 4; stack(Math.cos(ang) * r, 7 + Math.sin(ang) * r * 0.7, h, 'y', 'D', 'L', false, 10 + i); }
+    return { cams: [[[0, 2.5, 34], [0, 15, 0]], [[-17, 27, 20], [-9, 24, 0]], [[13, 19, 18], [0, 17, 0]]] };
   },
   blueprint(add) {
     for (let x = -28; x <= 28; x++) for (let z = -28; z <= 28; z++) add(x, 0, z, (x % 5 === 0 || z % 5 === 0) ? 'i' : 'N', 0.96, 0.25, 0.96);
@@ -619,9 +630,9 @@ if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 const capEl = document.getElementById('caption');
 let capText = '';
 function caption(t) { capText = t || ''; capEl.textContent = capText; capEl.hidden = !(capOn && capText); }
-function stopNarration() { narrOK = -1; speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (narrEl) { narrEl.onended = narrEl.ontimeupdate = narrEl.onerror = null; try { narrEl.pause(); } catch (e) {} } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
+function stopNarration() { narrOK = -1; speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (narrEl) { narrEl.onended = narrEl.ontimeupdate = narrEl.onerror = null; try { narrEl.pause(); } catch (e) {} } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn && started ? 0.05 : 0); }
 function narrate(i) {
-  stopNarration(); if (!soundOn) return;
+  stopNarration(); if (!soundOn || !started) return;
   const s = STORY[i]; const parts = s.say.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [s.say];
   speakingIdx = i; speechDone = false; document.documentElement.classList.add('is-speaking'); padLevel(0.022);
   const done = () => { if (speakingIdx !== i) return; speechDone = true; speakingIdx = -1; caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(0.05); };
@@ -646,7 +657,7 @@ function narrate(i) {
 /* ================= scroll journey: the page scroll is the camera ================= */
 let f = 0, cur = -1, sTarget = 0, sVis = 0, sPrev = 0, total = 1, segs = [], inTransit = false;
 const track = document.getElementById('track');
-const unit = () => innerHeight * 1.15;
+const unit = () => innerHeight * 1.7;
 function buildSegments() {
   segs = []; let acc = 0;
   LOC.forEach((L, i) => {
@@ -697,7 +708,9 @@ soundBtn.classList.add('is-call'); soundBtn.setAttribute('aria-pressed', 'true')
 function setSound(on) { soundOn = on; soundBtn.classList.remove('is-call'); soundBtn.setAttribute('aria-pressed', String(on)); if (on) { unlockAudio(); padLevel(0.05); } else { if (unlockEl) unlockEl.pause(); stopNarration(); padLevel(0); } }
 let started = false;
 function begin(withSound) {
+  const wasStarted = started;
   if (!started) { started = true; startVeil.classList.add('is-leaving'); setTimeout(() => { startVeil.hidden = true; }, 700); hint.hidden = false; }
+  if (!wasStarted && soundOn) { narrate(Math.max(0, cur)); padLevel(0.05); }
   if (withSound && !soundOn) { setSound(true); narrate(Math.max(0, cur)); }
 }
 document.getElementById('againBtn').addEventListener('click', () => { window.scrollTo(0, 0); sTarget = sVis = sPrev = 0; });
@@ -709,8 +722,8 @@ function firstGesture(e) {
   if (e && e.target && soundBtn.contains(e.target)) eatClick = true;
   soundBtn.classList.remove('is-call');
   if (!soundOn) return;
-  unlockAudio(); setEra(Math.max(0, cur)); padLevel(0.05);
-  if (narrOK !== cur) narrate(Math.max(0, cur));
+  unlockAudio(); setEra(Math.max(0, cur)); padLevel(started ? 0.05 : 0);
+  if (started && narrOK !== cur) narrate(Math.max(0, cur));
 }
 ['pointerdown', 'touchend', 'keydown', 'click'].forEach(t => addEventListener(t, firstGesture, true));
 soundBtn.addEventListener('click', () => { if (eatClick) { eatClick = false; return; } setSound(!soundOn); if (soundOn) narrate(Math.max(0, cur)); });
@@ -759,14 +772,8 @@ const tmpC = new THREE.Color(), camPos = new THREE.Vector3(), camLook = new THRE
 let last = performance.now(), fovKick = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  if (reduce.matches) sVis = sTarget; else {
-    /* pace: the camera may not cross a location faster than its narration plays, so picture and voice stay together */
-    const g = segs.find(x => sVis >= x.a && sVis < x.b), pace = soundOn ? 0.38 : 0.25;
-    const secs = g ? (g.kind === 'dwell' ? (STORY[g.i].dur || 14) * pace : 1.7) : 3;
-    const maxStep = ((g ? g.b - g.a : 0.35) / secs) * dt;
-    const want = (sTarget - sVis) * (1 - Math.exp(-dt * 5));
-    sVis += Math.max(-maxStep, Math.min(maxStep, want));
-  }
+  /* the camera is bound to the scroll position: it stops when the scroll stops */
+  sVis = reduce.matches ? sTarget : sVis + (sTarget - sVis) * (1 - Math.exp(-dt * 9));
   const vel = Math.abs(sVis - sPrev) / Math.max(dt, 0.001); sPrev = sVis;
   const st = fFromS(sVis); f = st.f;
   const transit = st.seg.kind === 'transit' && st.t > 0.02 && st.t < 0.98;
