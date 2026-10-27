@@ -170,6 +170,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 </style>
 </head>
 <body>
+
+
 <div class="stage" aria-hidden="true"><canvas id="world"></canvas></div>
 <div class="track" id="track" aria-hidden="true"></div>
 
@@ -237,26 +239,37 @@ a { color: inherit; text-underline-offset: 0.18em; }
 /* ================= story ================= */
 const STORY = [
   { id: 'fifty', year: '50', line: 'Полвека под одним куполом',
+    audio: 'audio/00-fifty.mp3',
     say: 'Московский рынок Казани. Полвека под одним куполом. Сейчас мы пролетим сквозь его историю: от первой рыночной площадки тысяча девятьсот тридцатого года до юбилея в две тысячи двадцать шестом.' },
   { id: 'field', year: '1930', line: 'Первая рыночная площадка',
+    audio: 'audio/01-1930.mp3',
     say: 'Тысяча девятьсот тридцатый год. Между улицами Энергетиков и Декабристов впервые открывается рыночная площадка. Сегодня у этого места адрес: улица Шамиля Усманова, дом один. Отсюда начинается Волгоградская улица.' },
   { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>',
+    audio: 'audio/02-1976.mp3',
     say: 'Тысяча девятьсот семьдесят шестой. Здесь вырастает крытое здание: лабаз с парусным сводом. В его основе стандартный советский проект, похожий свод был и у Чеховского рынка. Купольный силуэт становится главной приметой, и казанцы связывают его с образом тюбетейки. Открывается колхозный рынок Московского района.' },
   { id: 'hall', year: 'СССР', line: 'Рынок на четыре района',
+    audio: 'audio/03-hall.mp3',
     say: 'С самого открытия здесь продают продукты, одежду и бытовые товары. Рынок обслуживает жителей Московского, Кировского, Ново-Савиновского и Авиастроительного районов и быстро становится одним из крупнейших в Казани, наравне с Центральным и Приволжским. Это не только место торговли, но и часть повседневной жизни района.' },
   { id: 'maze', year: '1990-е', line: '<mark>13</mark> хозяев и лабиринт павильонов',
+    audio: 'audio/04-1990.mp3',
     say: 'Девяностые. Город распродаёт торговые площадки предпринимателям, и со временем здесь появляется тринадцать частных торговых объектов. Вокруг крытого здания вырастают вещевые и продуктовые павильоны. Рынок, как многие крупные торговые точки страны, оказывается в зоне влияния криминальных структур. А лабиринты павильонов становятся частью городской памяти: в них было легко заблудиться. Некоторые продавцы работали здесь не одно десятилетие.' },
   { id: 'crowd', year: '2000', line: 'Тесно, но открыто',
+    audio: 'audio/05-2000.mp3',
     say: 'Двухтысячные. Павильоны расширяют и реконструируют, но рынок по-прежнему перегружен. Обсуждают новый рынок в Ново-Савиновском районе. В две тысячи шестом плотная застройка и санитарные нормы грозят закрытием, но рынок продолжает работу. В две тысячи восьмом он занимает второе место в городском конкурсе рынков, а его управляющую компанию признают лучшей. В две тысячи десятом по улице Энергетиков проходит девятый трамвай. А в две тысячи одиннадцатом ярмарку на рынке посещает Рустам Минниханов.' },
   { id: 'bars', year: '2013', line: 'На торгах: <mark>250</mark>, потом 175 млн',
+    audio: 'audio/06-2013.mp3',
     say: 'Две тысячи тринадцатый. Рынок впервые выставляют на торги за двести пятьдесят миллионов рублей. В две тысячи пятнадцатом стартовую цену снижают до ста семидесяти пяти миллионов. В две тысячи двадцатом его снова выставляют на торги.' },
   { id: 'blueprint', year: '2022', line: 'Новый владелец и новый чертёж',
+    audio: 'audio/07-2022.mp3',
     say: 'Март две тысячи двадцать второго. Объект уходит с аукциона со значительным дисконтом: московское ООО «Казантик» предпринимателя Валерия Аржинта покупает рынок за сто семьдесят пять миллионов рублей. Концепцию обновления разрабатывает команда холдинга Гинза Проджект, который обновлял Даниловский рынок в Москве. Архитектурный проект делает петербургское бюро Да Бюро. Почти пятьдесят лет здание не знало капитального ремонта.' },
   { id: 'scaffold', year: '2023', line: 'Купол перекладывают заново',
+    audio: 'audio/08-2023.mp3',
     say: 'Май две тысячи двадцать третьего: начинается масштабная реконструкция. В сентябре исторический лабаз закрывают, торговцам предлагают павильоны на территории базара. Обновляют коммуникации, меняют витражи и покрытие купола, укрепляют и расширяют антресоли. Появляются вентиляция, кондиционирование, новые витрины, склады и ветеринарная лаборатория.' },
   { id: 'opening', year: '2025', line: '<mark>300</mark> мест в бистро под куполом',
+    audio: 'audio/09-2025.mp3',
     say: 'Двадцатое мая две тысячи двадцать пятого. Обновлённый рынок открывается в тестовом режиме: фермерские ряды, открытые кухни городских бистро на триста мест, зоны отдыха. Внутри около ста пятидесяти торговых мест, на улице ещё около двухсот. Вокруг амфитеатр, общественная теплица, ярмарочные ряды и зелень. Двадцать восьмого ноября проходит официальное открытие с участием Рустама Минниханова и мэра Казани Ильсура Метшина.' },
   { id: 'gold', year: '2026', line: 'Пятьдесят лет, каждый день',
+    audio: 'audio/10-2026.mp3',
     say: 'Две тысячи двадцать шестой. Московскому рынку пятьдесят лет. Он работает каждый день: продавцы с восьми утра до восьми вечера, кухни бистро до девяти. Приходите под купол.' }
 ];
 
@@ -302,6 +315,21 @@ function textMask(txt, w, h) {
   g.fillText(txt, w / 2, h / 2 + fs * 0.04); g.strokeText(txt, w / 2, h / 2 + fs * 0.04);
   const d = g.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 110 ? 1 : 0;
+  if (txt === '50') {
+    // hand-built block digits so the 5 never reads as a 6: open gaps top-right and bottom-left
+    m.fill(0);
+    const BW = 64, BH = 30, bm = new Uint8Array(BW * BH);
+    const box = (r0, r1, c0, c1) => { for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) bm[r * BW + c] = 1; };
+    box(1, 6, 4, 29); box(1, 15, 4, 10); box(11, 17, 4, 28); box(11, 25, 23, 29); box(23, 28, 5, 28);
+    for (const [r, c] of [[1, 4], [1, 29], [11, 29], [28, 5], [28, 28], [17, 4]]) bm[r * BW + c] = 0;
+    const cx = 47.5, cy = (BH + 1) / 2 - 0.5;
+    for (let r = 0; r < BH; r++) for (let c = 33; c < 62; c++) {
+      const o = Math.pow(Math.abs(c - cx) / 14, 3) + Math.pow(Math.abs(r - cy) / 14, 3);
+      const n = Math.pow(Math.abs(c - cx) / 8.2, 3) + Math.pow(Math.abs(r - cy) / 8.6, 3);
+      if (o <= 1 && n > 1) bm[r * BW + c] = 1;
+    }
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) m[r * w + c] = bm[Math.min(BH - 1, (r * BH / h) | 0) * BW + Math.min(BW - 1, (c * BW / w) | 0)];
+  }
   // holes: empty cells not reachable from the border
   const reach = new Uint8Array(w * h), q = [];
   for (let x = 0; x < w; x++) q.push(x, (h - 1) * w + x);
@@ -545,6 +573,8 @@ function unlockAudio() {
   try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
   if (!unlockEl) { unlockEl = new Audio(silentWav()); unlockEl.loop = true; unlockEl.setAttribute('playsinline', ''); unlockEl.volume = 0.01; }
   unlockEl.play().catch(() => {});
+  if (!narrEl) { narrEl = new Audio(); narrEl.setAttribute('playsinline', ''); narrEl.preload = 'auto'; }
+  if (!narrEl.src) { narrEl.src = silentWav(); narrEl.play().catch(() => {}); }
   initAudio();
   if (AC) { AC.resume(); const src = AC.createBufferSource(); src.buffer = AC.createBuffer(1, 1, 22050); src.connect(AC.destination); src.start(0); }
   if (synth && !voice) pickVoice();
@@ -575,7 +605,7 @@ function tick(seed) {
 }
 
 /* narration: a recorded file per location wins (STORY[i].audio), browser speech otherwise */
-const synth = window.speechSynthesis; const keepAlive = []; let voice = null, speakingIdx = -1, speechDone = true, audioEl = null, capOn = false;
+const synth = window.speechSynthesis; const keepAlive = []; let voice = null, speakingIdx = -1, speechDone = true, audioEl = null, narrEl = null, capOn = false;
 function pickVoice() {
   if (!synth) return; const vs = synth.getVoices().filter(v => /^ru/i.test(v.lang)); if (!vs.length) return;
   for (const re of [/natural|neural|online/i, /google/i, /milena.*(enhanced|premium)/i, /svetlana|dariya|irina/i, /milena/i, /yuri|pavel/i]) { const v = vs.find(x => re.test(x.name)); if (v) { voice = v; return; } }
@@ -585,20 +615,28 @@ if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 const capEl = document.getElementById('caption');
 let capText = '';
 function caption(t) { capText = t || ''; capEl.textContent = capText; capEl.hidden = !(capOn && capText); }
-function stopNarration() { speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (audioEl) { audioEl.pause(); audioEl = null; } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
+function stopNarration() { speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (narrEl) { narrEl.onended = narrEl.ontimeupdate = narrEl.onerror = null; try { narrEl.pause(); } catch (e) {} } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
 function narrate(i) {
   stopNarration(); if (!soundOn) return;
   const s = STORY[i]; const parts = s.say.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [s.say];
   speakingIdx = i; speechDone = false; document.documentElement.classList.add('is-speaking'); padLevel(0.022);
   const done = () => { if (speakingIdx !== i) return; speechDone = true; speakingIdx = -1; caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(0.05); };
-  if (s.audio) { audioEl = new Audio(s.audio); caption(parts[0]); audioEl.onended = done; audioEl.ontimeupdate = () => { const f = audioEl.currentTime / (audioEl.duration || 1); caption(parts[Math.min(parts.length - 1, Math.floor(f * parts.length))]); }; audioEl.play().catch(done); return; }
-  if (!synth) { speechDone = true; return; }
-  let k = 0; const step = () => {
-    if (speakingIdx !== i) return; if (k >= parts.length) return done();
-    caption(parts[k]); const u = new SpeechSynthesisUtterance(parts[k]); u.lang = 'ru-RU'; if (voice) u.voice = voice; u.rate = 0.98; u.pitch = 0.95;
-    u.onend = () => { k++; setTimeout(step, 160); }; u.onerror = e => { if (e && e.error === 'not-allowed') { speechDone = true; return; } k++; step(); }; keepAlive.push(u); if (keepAlive.length > 8) keepAlive.shift(); synth.speak(u); if (synth.paused) synth.resume();
+  const speak = () => {
+    if (!synth) { speechDone = true; return; }
+    let k = 0; const step = () => {
+      if (speakingIdx !== i) return; if (k >= parts.length) return done();
+      caption(parts[k]); const u = new SpeechSynthesisUtterance(parts[k]); u.lang = 'ru-RU'; if (voice) u.voice = voice; u.rate = 0.98; u.pitch = 0.95;
+      u.onend = () => { k++; setTimeout(step, 160); }; u.onerror = e => { if (e && e.error === 'not-allowed') { speechDone = true; return; } k++; step(); }; keepAlive.push(u); if (keepAlive.length > 8) keepAlive.shift(); synth.speak(u); if (synth.paused) synth.resume();
+    };
+    step();
   };
-  step();
+  if (s.audio && narrEl) {
+    /* one element unlocked by the first tap, only its src changes: keeps working from scroll events on phones */
+    narrEl.onended = done; narrEl.onerror = () => { if (speakingIdx === i) speak(); };
+    narrEl.ontimeupdate = () => { const f = narrEl.currentTime / (narrEl.duration || 1); caption(parts[Math.min(parts.length - 1, Math.floor(f * parts.length))]); };
+    narrEl.src = s.audio; caption(parts[0]); const pr = narrEl.play(); if (pr && pr.catch) pr.catch(() => { if (speakingIdx === i) speak(); }); return;
+  }
+  speak();
 }
 
 /* ================= scroll journey: the page scroll is the camera ================= */
