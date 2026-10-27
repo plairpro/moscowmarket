@@ -536,6 +536,19 @@ function buildDust() {
 let AC = null, master = null, padGain = null, pads = [], soundOn = false, tickBudget = 0, tickWin = 0;
 const ERA = [[196, 294], [174.6, 261.6], [196, 293.7], [220, 329.6], [164.8, 246.9], [174.6, 233.1], [155.6, 233.1], [146.8, 220], [164.8, 246.9], [220, 329.6], [261.6, 392]];
 const SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5];
+/* phones: route sound to the media channel (iOS mute switch silences Web Audio otherwise) and unlock inside the tap */
+let unlockEl = null;
+function silentWav() { const n = 4410, b = new ArrayBuffer(44 + n * 2), v = new DataView(b); const w = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 44100, true); v.setUint32(28, 88200, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+  return URL.createObjectURL(new Blob([b], { type: 'audio/wav' })); }
+function unlockAudio() {
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  if (!unlockEl) { unlockEl = new Audio(silentWav()); unlockEl.loop = true; unlockEl.setAttribute('playsinline', ''); unlockEl.volume = 0.01; }
+  unlockEl.play().catch(() => {});
+  initAudio();
+  if (AC) { AC.resume(); const src = AC.createBufferSource(); src.buffer = AC.createBuffer(1, 1, 22050); src.connect(AC.destination); src.start(0); }
+  if (synth && !voice) pickVoice();
+}
 function initAudio() {
   if (AC) return; const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
   AC = new C(); master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
@@ -562,7 +575,7 @@ function tick(seed) {
 }
 
 /* narration: a recorded file per location wins (STORY[i].audio), browser speech otherwise */
-const synth = window.speechSynthesis; let voice = null, speakingIdx = -1, speechDone = true, audioEl = null, capOn = false;
+const synth = window.speechSynthesis; const keepAlive = []; let voice = null, speakingIdx = -1, speechDone = true, audioEl = null, capOn = false;
 function pickVoice() {
   if (!synth) return; const vs = synth.getVoices().filter(v => /^ru/i.test(v.lang)); if (!vs.length) return;
   for (const re of [/natural|neural|online/i, /google/i, /milena.*(enhanced|premium)/i, /svetlana|dariya|irina/i, /milena/i, /yuri|pavel/i]) { const v = vs.find(x => re.test(x.name)); if (v) { voice = v; return; } }
@@ -572,7 +585,7 @@ if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 const capEl = document.getElementById('caption');
 let capText = '';
 function caption(t) { capText = t || ''; capEl.textContent = capText; capEl.hidden = !(capOn && capText); }
-function stopNarration() { speakingIdx = -1; speechDone = true; if (synth) synth.cancel(); if (audioEl) { audioEl.pause(); audioEl = null; } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
+function stopNarration() { speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (audioEl) { audioEl.pause(); audioEl = null; } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
 function narrate(i) {
   stopNarration(); if (!soundOn) return;
   const s = STORY[i]; const parts = s.say.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [s.say];
@@ -583,7 +596,7 @@ function narrate(i) {
   let k = 0; const step = () => {
     if (speakingIdx !== i) return; if (k >= parts.length) return done();
     caption(parts[k]); const u = new SpeechSynthesisUtterance(parts[k]); u.lang = 'ru-RU'; if (voice) u.voice = voice; u.rate = 0.98; u.pitch = 0.95;
-    u.onend = () => { k++; setTimeout(step, 160); }; u.onerror = () => { k++; step(); }; synth.speak(u);
+    u.onend = () => { k++; setTimeout(step, 160); }; u.onerror = e => { if (e && e.error === 'not-allowed') { speechDone = true; return; } k++; step(); }; keepAlive.push(u); if (keepAlive.length > 8) keepAlive.shift(); synth.speak(u); if (synth.paused) synth.resume();
   };
   step();
 }
@@ -633,16 +646,16 @@ const railBtns = [...rail.querySelectorAll('button')];
 function updateRail() { railBtns.forEach((b, i) => { b.setAttribute('aria-current', String(i === cur)); b.classList.toggle('is-past', i < cur); }); }
 const startVeil = document.getElementById('startVeil'), endVeil = document.getElementById('endVeil'), hint = document.getElementById('hint');
 const soundBtn = document.getElementById('soundBtn'), ccBtn = document.getElementById('ccBtn');
-function setSound(on) { soundOn = on; soundBtn.setAttribute('aria-pressed', String(on)); if (on) { initAudio(); if (AC) AC.resume(); padLevel(0.05); } else { stopNarration(); padLevel(0); } }
+function setSound(on) { soundOn = on; soundBtn.setAttribute('aria-pressed', String(on)); if (on) { unlockAudio(); padLevel(0.05); } else { if (unlockEl) unlockEl.pause(); stopNarration(); padLevel(0); } }
 let started = false;
 function begin(withSound) {
   if (!started) { started = true; startVeil.classList.add('is-leaving'); setTimeout(() => { startVeil.hidden = true; }, 700); hint.hidden = false; }
-  if (withSound && !soundOn) { setSound(true); if (cur >= 0) narrate(cur); }
+  if (withSound && !soundOn) { setSound(true); narrate(Math.max(0, cur)); }
 }
 document.getElementById('startBtn').addEventListener('click', () => begin(true));
 document.getElementById('silentBtn').addEventListener('click', () => begin(false));
 document.getElementById('againBtn').addEventListener('click', () => scrollToS(0));
-soundBtn.addEventListener('click', () => { setSound(!soundOn); if (soundOn && cur >= 0) narrate(cur); });
+soundBtn.addEventListener('click', () => { setSound(!soundOn); if (soundOn) narrate(Math.max(0, cur)); });
 ccBtn.addEventListener('click', () => { capOn = !capOn; ccBtn.setAttribute('aria-pressed', String(capOn)); caption(capText); });
 let endShown = false;
 function showEnd() { if (endShown) return; endShown = true; hideHighlight(); endVeil.hidden = false; endVeil.classList.remove('is-leaving'); }
