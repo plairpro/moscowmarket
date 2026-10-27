@@ -104,7 +104,7 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .wordmark i b:nth-child(5) { background: var(--color-green-deep); }
 .tools { pointer-events: auto; display: flex; gap: var(--space-2xs); }
 
-.hl { position: absolute; margin: 0; pointer-events: none; will-change: transform, opacity; text-shadow: 0 0 0.3em var(--color-paper), 0 0 0.9em var(--color-paper); font-family: var(--font-display); color: var(--color-ink); }
+.hl { overflow-wrap: normal; word-break: normal; hyphens: manual; position: absolute; margin: 0; pointer-events: none; will-change: transform, opacity; text-shadow: 0 0 0.3em var(--color-paper), 0 0 0.9em var(--color-paper); font-family: var(--font-display); color: var(--color-ink); }
 .hl[data-side="l"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); transform-origin: 0 50%; }
 .hl[data-side="r"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); text-align: right; transform-origin: 100% 50%; }
 .hl--year { top: calc(84px + env(safe-area-inset-top, 0px)); font-size: clamp(4rem, 11.5vw, 10.5rem); line-height: 0.85; letter-spacing: -0.035em; white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -127,8 +127,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 #startVeil { z-index: 90; pointer-events: none; }
 .veil.is-leaving { opacity: 0; pointer-events: none; }
 .veil__in { width: min(100%, 36rem); display: grid; gap: var(--space-lg); }
-.veil h1 { font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: 0.96; letter-spacing: -0.02em; }
-.veil p { font-size: var(--text-lg); color: var(--color-ink-2); max-width: 30ch; }
+.veil h1 { font-size: clamp(1.6rem, 7.4vw, 5.4rem); overflow-wrap: normal; word-break: normal; hyphens: manual; line-height: 0.96; letter-spacing: -0.02em; }
+.veil p { font-size: var(--text-lg); color: var(--color-ink-2); max-width: 34ch; overflow-wrap: normal; word-break: normal; }
 .veil__actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
 .veil small { font-size: var(--text-sm); color: var(--color-ink-2); }
 .veil dl { margin: 0; display: grid; gap: var(--space-xs); }
@@ -165,6 +165,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 @keyframes wave { from { opacity: 0.35; } to { opacity: 1; } }
 .icon-btn.is-call { animation: call 1.8s var(--ease-out) infinite; }
 @keyframes call { 0% { box-shadow: 0 0 0 0 var(--color-tomato); } 70%, 100% { box-shadow: 0 0 0 14px transparent; } }
+.glow { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(70% 55% at 88% -6%, color-mix(in srgb, var(--color-gold-hi) 55%, transparent), transparent 62%), radial-gradient(60% 40% at 8% 105%, color-mix(in srgb, var(--color-peach) 30%, transparent), transparent 70%); mix-blend-mode: screen; display: none; }
+.gl .glow { display: block; }
 .confetti { position: fixed; inset: 0; z-index: 150; width: 100%; height: 100%; pointer-events: none; }
 </style>
 </head>
@@ -185,15 +187,16 @@ a { color: inherit; text-underline-offset: 0.18em; }
   <div class="hl hl--year" id="hlYear" data-side="l" aria-live="polite" style="opacity:0"></div>
   <div class="hl hl--line" id="hlLine" data-side="r" style="opacity:0"></div>
   <div class="caption" id="caption" hidden></div>
-  <div class="hint" id="hint" hidden><span class="hint__tiles" aria-hidden="true"><b></b><b></b><b></b></span>Крутите вниз, чтобы лететь</div>
+  <div class="hint" id="hint" hidden><span class="hint__tiles" aria-hidden="true"><b></b><b></b><b></b></span>Листайте вниз</div>
 </div>
 
+<div class="glow" aria-hidden="true"></div>
 <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
 
 <div class="veil" id="startVeil">
   <div class="veil__in">
     <h1>История Московского рынка в Казани</h1>
-    <p>Скролльте мышью или листайте пальцем. Обязательно включите звук</p>
+    <p>Листайте вниз<br>Обязательно включите звук</p>
   </div>
 </div>
 
@@ -296,11 +299,13 @@ function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; 
 
 /* ================= three setup ================= */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(PAL.B);
-scene.fog = new THREE.Fog(PAL.B, 60, 270);
+const skyCv = document.createElement('canvas'); skyCv.width = 4; skyCv.height = 256;
+{ const g = skyCv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#7fb6e0'); gr.addColorStop(0.38, '#bcdcec'); gr.addColorStop(0.62, '#e7f0e4'); gr.addColorStop(1, '#eaf0e0'); g.fillStyle = gr; g.fillRect(0, 0, 4, 256); }
+scene.background = new THREE.CanvasTexture(skyCv);
+scene.fog = new THREE.Fog(0xe4eedf, 70, 330);
 const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 520);
-scene.add(new THREE.HemisphereLight(0xffffff, 0xd8cbb8, 0.78));
-const sun = new THREE.DirectionalLight(0xfff4e0, 0.62); sun.position.set(-0.6, 1, 0.45); scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xeaf6ff, 0x8fae6c, 0.86));
+const sun = new THREE.DirectionalLight(0xffeccc, 0.7); sun.position.set(-0.6, 1, 0.45); scene.add(sun);
 const BOX = new THREE.BoxGeometry(1, 1, 1);
 const MAT = new THREE.MeshLambertMaterial({ color: 0xffffff });
 
@@ -547,6 +552,7 @@ function buildAll() {
     const arr = mesh.instanceMatrix.array, col = new THREE.Color(), glitter = [];
     items.forEach((it, i) => {
       const o = i * 16; arr[o] = it.sx; arr[o + 5] = it.sy; arr[o + 10] = it.sz; arr[o + 15] = 1; arr[o + 12] = it.x; arr[o + 13] = it.y; arr[o + 14] = it.z;
+      if (it.y === 0 && it.sy <= 0.35 && (it.key === 'P' || it.key === 'W')) col.set(it.key === 'P' ? '#cdc4a8' : '#e3dbc3'); else
       if (it.key === 'Y') { glitter.push(i); goldAt(0.3 + hash(it.x, it.y, it.z) * 0.4, col); } else col.copy(COL[it.key] || COL.P);
       col.multiplyScalar(0.92 + hash(it.x, it.z, it.y * 3) * 0.12); mesh.setColorAt(i, col);
     });
@@ -568,6 +574,62 @@ function buildAll() {
 
 let curveP, curveL, NPTS, dust;
 function buildCurves() { curveP = new THREE.CatmullRomCurve3(camPts, false, 'centripetal'); curveL = new THREE.CatmullRomCurve3(lookPts, false, 'centripetal'); NPTS = camPts.length; }
+
+/* ================= nature: meadow, trees, bushes and clouds around the route ================= */
+let clouds = null;
+function buildNature() {
+  const n = LOC.length, zMax = 200, zMin = -(n - 1) * SPACING - 260, zLen = zMax - zMin;
+  /* meadow: a mosaic of greens, the same tile idea as everything else */
+  const gc = document.createElement('canvas'); gc.width = gc.height = 256; const g = gc.getContext('2d');
+  const greens = ['#5f9457', '#68a05d', '#559050', '#73a863', '#4e8a4f', '#6a9d5a'];
+  for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) { const patch = hash(Math.floor(x / 6), Math.floor(y / 6), 5); g.fillStyle = greens[Math.min(5, Math.floor((hash(x, y, 3) * 0.6 + patch * 0.4) * 6))]; g.fillRect(x * 8, y * 8, 8, 8); }
+  g.strokeStyle = 'rgba(255,255,230,0.16)'; g.lineWidth = 1; for (let i = 0; i <= 32; i++) { g.beginPath(); g.moveTo(i * 8 + 0.5, 0); g.lineTo(i * 8 + 0.5, 256); g.moveTo(0, i * 8 + 0.5); g.lineTo(256, i * 8 + 0.5); g.stroke(); }
+  const tex = new THREE.CanvasTexture(gc); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.magFilter = THREE.NearestFilter; tex.anisotropy = 8; tex.repeat.set(1000 / 64, zLen / 64);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1000, zLen), new THREE.MeshLambertMaterial({ map: tex }));
+  ground.rotation.x = -Math.PI / 2; ground.position.set(0, -0.42, (zMax + zMin) / 2); scene.add(ground);
+  /* where trees may not stand: near the stops and along the flight corridor */
+  const C = LOC.map(l => [l.ox, l.oz]);
+  const distSeg = (px, pz, a, b) => { const dx = b[0] - a[0], dz = b[1] - a[1], t = Math.max(0, Math.min(1, ((px - a[0]) * dx + (pz - a[1]) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(px - (a[0] + t * dx), pz - (a[1] + t * dz)); };
+  const free = (x, z) => { for (let i = 0; i < C.length; i++) { if (Math.hypot(x - C[i][0], z - C[i][1]) < 50) return false; if (i && distSeg(x, z, C[i - 1], C[i]) < 26) return false; } return true; };
+  const inst = [];
+  const put = (x, y, z, sx, sy, sz, col) => inst.push([x, y, z, sx, sy, sz, col]);
+  const TRUNK = new THREE.Color('#6d4b2f'), LEAF = ['#2f7a45', '#3f8c4a', '#4f9c53', '#62ab5a', '#2a6b40'].map(c => new THREE.Color(c)), BLOOM = ['#e6a0a8', '#f2d26b', '#f0f0e8'].map(c => new THREE.Color(c));
+  const tree = (x, z, k, seed) => {
+    const H = 3 + Math.floor(hash(x, z, 1) * 3), r = 1.6 + (hash(x, z, 2) > 0.5 ? 0.6 : 0), pal = hash(x, z, 8), bloom = hash(x, z, 9) > 0.86;
+    for (let y = 0; y < H; y++) put(x, y * k + 0.5 * k, z, 0.9 * k, k, 0.9 * k, TRUNK);
+    for (let L = 0; L < 4; L++) { const rr = [r, r + 0.4, r - 0.3, 1][L], yy = (H + L) * k + 0.5 * k;
+      for (let dx = -3; dx <= 3; dx++) for (let dz = -3; dz <= 3; dz++) { if (dx * dx + dz * dz > rr * rr) continue; if (L === 3 && (dx || dz)) continue;
+        const h = hash(x + dx, z + dz, L + 20); const c = (bloom && h > 0.75 && L < 3) ? BLOOM[(h * 10 | 0) % 3] : LEAF[Math.min(4, Math.floor((h * 0.6 + pal * 0.4 + L * 0.05) * 5))];
+        put(x + dx * k, yy, z + dz * k, 0.96 * k, 0.96 * k, 0.96 * k, c); } }
+  };
+  const bush = (x, z) => { for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) { if (Math.abs(dx) + Math.abs(dz) > 1 && hash(x + dx, z + dz, 4) > 0.5) continue; put(x + dx, 0.5, z + dz, 0.95, 0.9, 0.95, LEAF[(hash(x + dx, z, 6) * 5) | 0]); } put(x, 1.4, z, 0.9, 0.8, 0.9, LEAF[2]); };
+  for (let z = zMax - 20; z > zMin + 20; z -= 15) for (let x = -210; x <= 210; x += 15) {
+    const px = x + (hash(x, z, 11) - 0.5) * 9, pz = z + (hash(x, z, 12) - 0.5) * 9;
+    if (!free(px, pz)) continue;
+    const r = hash(x, z, 13);
+    if (r < 0.32) tree(Math.round(px), Math.round(pz), 1 + hash(x, z, 14) * 0.7, 0);
+    else if (r < 0.40) bush(Math.round(px), Math.round(pz));
+  }
+  const mesh = new THREE.InstancedMesh(BOX, MAT, inst.length); mesh.frustumCulled = false; const a = mesh.instanceMatrix.array;
+  inst.forEach(([x, y, z, sx, sy, sz, col], i) => { const o = i * 16; a[o] = sx; a[o + 5] = sy; a[o + 10] = sz; a[o + 15] = 1; a[o + 12] = x; a[o + 13] = y; a[o + 14] = z; mesh.setColorAt(i, col); });
+  mesh.instanceColor.needsUpdate = true; scene.add(mesh);
+  /* voxel clouds that drift slowly */
+  const parts = [], CN = 46;
+  for (let c = 0; c < CN; c++) {
+    const bx = (hash(c, 1, 31) - 0.5) * 700, by = 60 + hash(c, 2, 32) * 60, bz = zMax - hash(c, 3, 33) * zLen, s = 5 + hash(c, 4, 34) * 4, w = 3 + Math.floor(hash(c, 5, 35) * 3), spd = 0.8 + hash(c, 6, 36) * 1.4;
+    for (let dx = -w; dx <= w; dx++) for (let dz = -2; dz <= 2; dz++) for (let dy = 0; dy < 2; dy++) {
+      if ((dx * dx) / (w * w) + (dz * dz) / 5 + dy * 0.7 > 1.15 || hash(c + dx, dz, dy + 40) > 0.88) continue;
+      parts.push({ c, dx: dx * s, dy: dy * s * 0.7, dz: dz * s, s: s * 1.05, bx, by, bz, spd });
+    }
+  }
+  const cm = new THREE.InstancedMesh(BOX, new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x9aa8b8, emissiveIntensity: 0.55 }), parts.length); cm.frustumCulled = false; scene.add(cm);
+  clouds = { mesh: cm, parts };
+}
+function driftClouds(t) {
+  if (!clouds) return; const a = clouds.mesh.instanceMatrix.array;
+  clouds.parts.forEach((p, i) => { const o = i * 16, x = ((p.bx + p.dx + t * p.spd + 400) % 800) - 400; a[o] = p.s; a[o + 5] = p.s * 0.7; a[o + 10] = p.s; a[o + 15] = 1; a[o + 12] = x; a[o + 13] = p.by + p.dy; a[o + 14] = p.bz + p.dz; });
+  clouds.mesh.instanceMatrix.needsUpdate = true;
+}
 function buildDust() {
   const n = 900, pos = new Float32Array(n * 3), ca = new Float32Array(n * 3), keys = ['T', 'y', 'i', 'g', 'o', 'P'];
   for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - 0.5) * 90; pos[i * 3 + 1] = Math.random() * 40; pos[i * 3 + 2] = (Math.random() - 0.5) * 90; const c = COL[keys[i % keys.length]]; ca[i * 3] = c.r; ca[i * 3 + 1] = c.g; ca[i * 3 + 2] = c.b; }
@@ -603,7 +665,7 @@ function initAudio() {
   setEra(cur);
 }
 function setEra(i) { if (!AC) return; const [a, b] = ERA[i] || ERA[0]; pads.forEach((o, k) => o.frequency.setTargetAtTime(k < 2 ? a / 2 * (k ? 1.003 : 1) : b / 2, AC.currentTime, 1.4)); }
-function padLevel(v) { if (padGain) padGain.gain.setTargetAtTime(v, AC.currentTime, 0.7); }
+function padLevel() { /* no background drone: the music will be a separate recorded track; whoosh and tile ticks stay */ }
 function whoosh(len) {
   if (!soundOn || !AC) return; const t = AC.currentTime;
   const buf = AC.createBuffer(1, Math.floor(AC.sampleRate * len), AC.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -802,13 +864,14 @@ function frame(now) {
   const kickTarget = transit && !reduce.matches ? Math.min(16, vel * 9) : 0; fovKick += (kickTarget - fovKick) * Math.min(1, dt * 4);
   const fov = baseFov() + fovKick;
   if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  if (!reduce.matches) driftClouds(now / 1000); else driftClouds(0);
   dust.position.set(Math.round(camPos.x / 90) * 90, 0, Math.round(camPos.z / 90) * 90);
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
 
 fontReady.then(() => {
-  buildAll(); buildCurves(); buildDust(); resize(); buildSegments();
+  buildAll(); buildNature(); buildCurves(); buildDust(); resize(); buildSegments();
   window.scrollTo(0, 0); sTarget = sVis = sPrev = scrollY / unit();
   if (!reduce.matches) { LOC.forEach(L => scatter(L)); }
   requestAnimationFrame(frame);
