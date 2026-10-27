@@ -104,18 +104,12 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .wordmark i b:nth-child(5) { background: var(--color-green-deep); }
 .tools { pointer-events: auto; display: flex; gap: var(--space-2xs); }
 
-.highlight { position: absolute; display: grid; gap: var(--space-sm); max-width: min(56rem, calc(100% - 2 * var(--space-lg))); text-shadow: 0 0 0.3em var(--color-paper), 0 0 0.9em var(--color-paper); }
-.highlight[data-pos="bl"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); }
-.highlight[data-pos="br"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); justify-items: end; text-align: right; }
-.highlight[data-pos="tl"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); top: calc(88px + env(safe-area-inset-top, 0px)); }
-.highlight[data-pos="tr"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); top: calc(88px + env(safe-area-inset-top, 0px)); justify-items: end; text-align: right; }
-.highlight__year { font-family: var(--font-display); font-size: var(--text-year); line-height: 0.82; letter-spacing: -0.035em; color: var(--color-ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.highlight__line { font-family: var(--font-display); font-size: var(--text-line); line-height: 1.02; color: var(--color-ink); max-width: 14ch; text-wrap: balance; }
-.highlight__line mark { background: var(--color-accent); color: var(--color-accent-ink); padding: 0 0.18em; text-shadow: none; }
-.highlight > * { transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out); }
-.highlight.is-out > * { opacity: 0; transform: translateY(18px); }
-.highlight.is-late .highlight__line { opacity: 0; transform: translateY(18px); }
-.highlight.is-out.is-late .highlight__line { transition-delay: 0ms; }
+.hl { position: absolute; margin: 0; pointer-events: none; will-change: transform, opacity; text-shadow: 0 0 0.3em var(--color-paper), 0 0 0.9em var(--color-paper); font-family: var(--font-display); color: var(--color-ink); }
+.hl[data-side="l"] { left: max(var(--space-xl), env(safe-area-inset-left, 0px)); transform-origin: 0 50%; }
+.hl[data-side="r"] { right: max(var(--space-xl), env(safe-area-inset-right, 0px)); text-align: right; transform-origin: 100% 50%; }
+.hl--year { top: calc(84px + env(safe-area-inset-top, 0px)); font-size: clamp(4rem, 11.5vw, 10.5rem); line-height: 0.85; letter-spacing: -0.035em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hl--line { bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); font-size: clamp(1.7rem, 4.4vw, 4rem); line-height: 1.02; max-width: 13ch; text-wrap: balance; }
+.hl--line mark { background: var(--color-accent); color: var(--color-accent-ink); padding: 0 0.18em; text-shadow: none; }
 
 .hint { position: absolute; right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: var(--space-sm); background: var(--color-paper-2); padding: var(--space-sm) var(--space-md); font-weight: 500; font-size: var(--text-sm); }
 .hint[hidden] { display: none; }
@@ -130,6 +124,7 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .veil { position: fixed; inset: 0; z-index: var(--z-veil); display: none; align-items: center; padding-block: var(--space-2xl); padding-left: max(var(--space-xl), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-xl), env(safe-area-inset-right, 0px)); background: linear-gradient(90deg, var(--color-scrim) 0%, var(--color-scrim) 40%, transparent 75%); transition: opacity var(--dur-long) var(--ease-out); }
 .gl .veil { display: flex; }
 .gl .veil[hidden] { display: none; }
+#startVeil { z-index: 90; pointer-events: none; }
 .veil.is-leaving { opacity: 0; pointer-events: none; }
 .veil__in { width: min(100%, 36rem); display: grid; gap: var(--space-lg); }
 .veil h1 { font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: 0.96; letter-spacing: -0.02em; }
@@ -142,7 +137,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .veil dd { margin: 0; font-weight: 500; }
 
 /* without WebGL or script: the story as a plain list */
-.fallback { max-width: 52rem; margin-inline: auto; padding-block: var(--space-2xl); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); display: grid; gap: var(--space-xl); }
+.fallback { display: none; max-width: 52rem; margin-inline: auto; padding-block: var(--space-2xl); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); display: grid; gap: var(--space-xl); }
+.nogl .fallback { display: grid; }
 .gl .fallback { display: none; }
 .fallback h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1; }
 .fallback ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-lg); }
@@ -150,8 +146,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .fallback li b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; }
 
 @media (max-width: 760px) {
-  .highlight[data-pos="bl"], .highlight[data-pos="tl"] { left: max(var(--space-md), env(safe-area-inset-left, 0px)); }
-  .highlight[data-pos="br"], .highlight[data-pos="tr"] { right: max(var(--space-md), env(safe-area-inset-right, 0px)); }
+  .hl[data-side="l"] { left: max(var(--space-md), env(safe-area-inset-left, 0px)); }
+  .hl[data-side="r"] { right: max(var(--space-md), env(safe-area-inset-right, 0px)); }
   .tools .lbl { display: none; }
   .veil { align-items: flex-end; background: linear-gradient(0deg, var(--color-scrim) 0%, var(--color-scrim) 55%, transparent 90%); }
   .veil dl div { grid-template-columns: 7rem minmax(0, 1fr); }
@@ -167,6 +163,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 .is-speaking #soundBtn .snd__on path { animation: wave 0.9s var(--ease-out) infinite alternate; }
 .is-speaking #soundBtn .snd__on path:nth-child(2) { animation-delay: -0.45s; }
 @keyframes wave { from { opacity: 0.35; } to { opacity: 1; } }
+.icon-btn.is-call { animation: call 1.8s var(--ease-out) infinite; }
+@keyframes call { 0% { box-shadow: 0 0 0 0 var(--color-tomato); } 70%, 100% { box-shadow: 0 0 0 14px transparent; } }
 .confetti { position: fixed; inset: 0; z-index: 150; width: 100%; height: 100%; pointer-events: none; }
 </style>
 </head>
@@ -184,10 +182,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
       <button class="icon-btn" id="ccBtn" type="button" aria-pressed="false" aria-label="Субтитры"><span aria-hidden="true">CC</span></button>
           </div>
   </div>
-  <div class="highlight is-out is-late" id="highlight" aria-live="polite">
-    <div class="highlight__year" id="hlYear"></div>
-    <div class="highlight__line" id="hlLine"></div>
-  </div>
+  <div class="hl hl--year" id="hlYear" data-side="l" aria-live="polite" style="opacity:0"></div>
+  <div class="hl hl--line" id="hlLine" data-side="r" style="opacity:0"></div>
   <div class="caption" id="caption" hidden></div>
   <div class="hint" id="hint" hidden><span class="hint__tiles" aria-hidden="true"><b></b><b></b><b></b></span>Крутите вниз, чтобы лететь</div>
 </div>
@@ -196,13 +192,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 
 <div class="veil" id="startVeil">
   <div class="veil__in">
-    <h1>Полвека под одним куполом</h1>
-    <p>Путешествие по Московскому рынку Казани, с 1930 по 2026 год, под голос рассказчика.</p>
-    <div class="veil__actions">
-      <button class="btn" id="startBtn" type="button"><span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>Начать путешествие</button>
-      <button class="btn btn--ghost" id="silentBtn" type="button">Без звука</button>
-    </div>
-    <small>Лучше в наушниках. Крутите колесо или листайте пальцем: камера летит, пока вы скроллите.</small>
+    <h1>История Московского рынка в Казани</h1>
+    <p>Скролльте мышью или листайте пальцем. Обязательно включите звук</p>
   </div>
 </div>
 
@@ -235,42 +226,48 @@ a { color: inherit; text-underline-offset: 0.18em; }
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<noscript><style>.fallback { display: grid; }</style></noscript>
+<script>
+setTimeout(() => { if (!document.documentElement.classList.contains('gl')) document.documentElement.classList.add('nogl'); }, 9000);
+</script>
 <script>
 (() => {
 'use strict';
+try { history.scrollRestoration = 'manual'; } catch (e) {}
+addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 /* ================= story ================= */
 const STORY = [
-  { id: 'fifty', year: '', line: '', pos: 'bl',
+  { id: 'fifty', year: '', line: '',
     audio: 'audio/00-fifty.mp3?v=3', dur: 9.5,
     say: 'Московский рынок Казани. Полвека под одним куполом. Давайте пронесёмся сквозь его историю: от первой рыночной площадки до полувекового юбилея.' },
-  { id: 'field', year: '1930', line: 'Первая рыночная площадка', pos: 'bl',
+  { id: 'field', year: '1930', line: 'Первая рыночная площадка',
     audio: 'audio/01-1930.mp3?v=3', dur: 13.9,
     say: 'Тысяча девятьсот тридцатый год. Между улицами Энергетиков и Декабристов впервые открывается рыночная площадка. Сегодня у этого места адрес: улица Шамиля Усманова, дом один. Отсюда начинается Волгоградская улица.' },
-  { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>', pos: 'tl',
+  { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>',
     audio: 'audio/02-1976.mp3?v=3', dur: 21,
     say: 'Тысяча девятьсот семьдесят шестой — год официального открытия колхозного рынка Московского района. Здесь вырастает крытое здание: лабаз с парусным сводом. В его основе стандартный советский проект. Похожий свод был и у Чеховского рынка. Купольный силуэт становится главной приметой, и казанцы связывают его с образом тюбетейки.' },
-  { id: 'hall', year: 'СССР', line: 'Рынок на четыре района', pos: 'br',
+  { id: 'hall', year: 'СССР', line: 'Рынок на четыре района',
     audio: 'audio/03-hall.mp3?v=3', dur: 19.9,
     say: 'С самого открытия здесь продают продукты, одежду и бытовые товары. Рынок обслуживает жителей Московского, Кировского, Ново-Савиновского и Авиастроительного районов и быстро становится одним из крупнейших в Казани, наравне с Центральным и Приволжским. Это не только место торговли, но и часть повседневной жизни горожан.' },
-  { id: 'maze', year: '1990-е', line: 'Лабиринт павильонов', pos: 'tr',
+  { id: 'maze', year: '1990-е', line: 'Лабиринт павильонов',
     audio: 'audio/04-1990.mp3?v=3', dur: 21.5,
     say: 'Девяностые. Город распродаёт торговые площадки предпринимателям, и со временем здесь появляется тринадцать частных торговых объектов. Вокруг крытого здания вырастают вещевые и продуктовые павильоны. Эти лабиринты становятся частью городской памяти: в них было легко заблудиться. Некоторые продавцы работали здесь не одно десятилетие.' },
-  { id: 'crowd', year: '2000', line: 'Расширяют павильоны', pos: 'bl',
+  { id: 'crowd', year: '2000', line: 'Расширяют павильоны',
     audio: 'audio/05-2000.mp3?v=3', dur: 27.2,
     say: 'Двухтысячные. Павильоны расширяют и реконструируют, но рынок по-прежнему перегружен. Обсуждают новый рынок в Ново-Савиновском районе. В две тысячи шестом плотная застройка и санитарные нормы грозят закрытием, но рынок продолжает работу. В две тысячи восьмом он занимает второе место в городском конкурсе рынков, а его управляющую компанию признают лучшей. В две тысячи десятом по улице Энергетиков проходит девятый трамвай.' },
-  { id: 'bars', year: '2013', line: 'Рынок выставляют на торги', pos: 'tl',
+  { id: 'bars', year: '2013', line: 'Рынок выставляют на торги',
     audio: 'audio/06-2013.mp3?v=3', dur: 14.5,
     say: 'Две тысячи тринадцатый. Рынок впервые выставляют на торги за двести пятьдесят миллионов рублей. В две тысячи пятнадцатом стартовую цену снижают до ста семидесяти пяти миллионов. В две тысячи двадцатом его снова выставляют на торги.' },
-  { id: 'blueprint', year: '2022', line: 'Новый владелец и новые планы', pos: 'br',
+  { id: 'blueprint', year: '2022', line: 'Новый владелец и новые планы',
     audio: 'audio/07-2022.mp3?v=3', dur: 26.8,
     say: 'Март две тысячи двадцать второго. Объект уходит с аукциона со значительным дисконтом — московский предприниматель покупает рынок за сто семьдесят пять миллионов рублей. В планах — перезапуск рынка. Почти пятьдесят лет здание не знало капитального ремонта. Концепцию обновления разрабатывает команда холдинга Гинза Проджект, который обновлял Даниловский рынок в Москве. Архитектурный проект делает петербургское бюро Да Бюро.' },
-  { id: 'scaffold', year: '2023', line: 'Начало реконструкции', pos: 'tr',
+  { id: 'scaffold', year: '2023', line: 'Начало реконструкции',
     audio: 'audio/08-2023.mp3?v=3', dur: 22.6,
     say: 'Май две тысячи двадцать третьего: начинается масштабная реконструкция. В сентябре исторический лабаз закрывают, торговцам предлагают павильоны на территории базара. Обновляют коммуникации, меняют витражи и покрытие купола, укрепляют и расширяют антресоли. Появляются вентиляция, кондиционирование, новые витрины, склады и ветеринарная лаборатория.' },
-  { id: 'opening', year: '2025', line: 'Рынок открыт заново', pos: 'tl',
+  { id: 'opening', year: '2025', line: 'Рынок открыт заново',
     audio: 'audio/09-2025.mp3?v=3', dur: 26.1,
     say: 'Двадцатое мая две тысячи двадцать пятого. Обновлённый рынок открывается в тестовом режиме: фермерские ряды, открытые кухни городских бистро на триста мест, зоны отдыха. Внутри около ста пятидесяти торговых мест, на улице ещё около двухсот. Вокруг амфитеатр, общественная теплица, ярмарочные ряды и зелень. Двадцать восьмого ноября проходит официальное открытие с участием руководства республики и города.' },
-  { id: 'gold', year: '2026', line: 'Каждый день. 50 лет', pos: 'bl',
+  { id: 'gold', year: '2026', line: 'Каждый день. 50 лет',
     audio: 'audio/10-2026.mp3?v=3', dur: 12.7,
     say: 'Две тысячи двадцать шестой. Московскому рынку пятьдесят лет, и только что он получил вторую жизнь. Каждый день с восьми утра здесь открыты двери для любителей свежих продуктов и вкусной разнообразной кухни.' }
 ];
@@ -278,7 +275,7 @@ const STORY = [
 const canvas = document.getElementById('world');
 let renderer = null;
 try { if (window.THREE) renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); } catch (e) { renderer = null; }
-if (!renderer) return; // the fallback list stays
+if (!renderer) { document.documentElement.classList.add('nogl'); return; } // the plain list takes over
 document.documentElement.classList.add('js', 'gl');
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -376,19 +373,28 @@ function plaza(add, r, step = 2) { for (let x = -r; x <= r; x += step) for (let 
 const SPACING = 170;
 const builders = {
   fifty(add) {
-    const W = 64, H = 30, mk = textMask('50', W, H);
+    const W = 64, H = 30, mk = textMask('50', W, H), SH = innerWidth / innerHeight > 1 ? 15 : 0;
     let hx = 0, hy = 0, hn = 0;
     for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
       const i = r * W + c, x = c - W / 2 + 0.5, y = H - r + 1;
       if (mk.m[i]) {
         const edge = !mk.m[i - 1] || !mk.m[i + 1] || !mk.m[i - W] || !mk.m[i + W];
-        add(x, y, 0, edge ? 'G' : (pat(c < W / 2 ? 'tomato' : 'flower', c, r) || 'y'), 0.92, 0.92, 0.6);
+        add(x + SH, y, 0, edge ? 'G' : (pat(c < W / 2 ? 'tomato' : 'flower', c, r) || 'y'), 0.92, 0.92, 0.6);
       } else if (mk.hole(i)) { if (c > W / 2) { hx += x; hy += y; hn++; } }
-      else if ((c + r) % 2 === 0 && hash(c, r, 2) > 0.35) add(x, y, -0.2, 'P', 0.9, 0.9, 0.3);
     }
-    for (let x = -40; x <= 40; x += 2) for (let z = -30; z <= 40; z += 2) if (hash(x, z, 4) > 0.45) add(x, 0, z, (x + z) % 4 ? 'P' : 'W', 1.8, 0.25, 1.8);
+    /* loose tiles around the figure: dense next to the digits, thinning out with distance */
+    const R = 9;
+    for (let r = -14; r < H + 14; r++) for (let c = -22; c < W + 22; c++) {
+      if (c >= 0 && c < W && r >= 0 && r < H && (mk.m[r * W + c] || mk.hole(r * W + c))) continue;
+      let d = R + 1;
+      for (let dy = -R; dy <= R && d > 1; dy++) for (let dx = -R; dx <= R; dx++) { const rr = r + dy, cc = c + dx; if (rr < 0 || rr >= H || cc < 0 || cc >= W || !mk.m[rr * W + cc]) continue; const dd = Math.hypot(dx, dy); if (dd < d) d = dd; }
+      if (d > R) continue;
+      const p = 0.92 * Math.pow(1 - (d - 1) / R, 1.6);
+      if (hash(c, r, 2) < p) add(c - W / 2 + 0.5 + SH, H - r + 1, -0.2 - hash(c, r, 7) * 0.8, 'P', 0.9, 0.9, 0.3);
+    }
+    for (let x = -40; x <= 40; x += 2) for (let z = -30; z <= 40; z += 2) if (hash(x, z, 4) > 0.45) add(x + SH, 0, z, (x + z) % 4 ? 'P' : 'W', 1.8, 0.25, 1.8);
     if (hn > 6) { hx /= hn; hy /= hn; } else { hx = 16; hy = H + 6; }
-    return { cams: [[[hx * 0.25, hy, 58], [hx * 0.35, hy - 1, 0]], [[hx, hy, 16], [hx, hy, 0]], [[hx, hy, -10], [hx, hy - 1, -50]]] };
+    return { cams: [[[hx * 0.25, hy, 58], [hx * 0.35, hy - 1, 0]], [[hx + SH, hy, 16], [hx + SH, hy, 0]], [[hx + SH, hy, -10], [hx + SH, hy - 1, -50]]] };
   },
   field(add) {
     for (let x = -32; x <= 32; x++) for (let z = -32; z <= 32; z++) {
@@ -559,7 +565,7 @@ function buildDust() {
 }
 
 /* ================= audio: pad, whoosh, tile clicks ================= */
-let AC = null, master = null, padGain = null, pads = [], soundOn = false, tickBudget = 0, tickWin = 0;
+let AC = null, master = null, padGain = null, pads = [], soundOn = true, narrOK = -1, tickBudget = 0, tickWin = 0;
 const ERA = [[196, 294], [174.6, 261.6], [196, 293.7], [220, 329.6], [164.8, 246.9], [174.6, 233.1], [155.6, 233.1], [146.8, 220], [164.8, 246.9], [220, 329.6], [261.6, 392]];
 const SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5];
 /* phones: route sound to the media channel (iOS mute switch silences Web Audio otherwise) and unlock inside the tap */
@@ -613,7 +619,7 @@ if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 const capEl = document.getElementById('caption');
 let capText = '';
 function caption(t) { capText = t || ''; capEl.textContent = capText; capEl.hidden = !(capOn && capText); }
-function stopNarration() { speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (narrEl) { narrEl.onended = narrEl.ontimeupdate = narrEl.onerror = null; try { narrEl.pause(); } catch (e) {} } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
+function stopNarration() { narrOK = -1; speakingIdx = -1; speechDone = true; if (synth && (synth.speaking || synth.pending)) synth.cancel(); if (narrEl) { narrEl.onended = narrEl.ontimeupdate = narrEl.onerror = null; try { narrEl.pause(); } catch (e) {} } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
 function narrate(i) {
   stopNarration(); if (!soundOn) return;
   const s = STORY[i]; const parts = s.say.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [s.say];
@@ -632,7 +638,7 @@ function narrate(i) {
     /* one element unlocked by the first tap, only its src changes: keeps working from scroll events on phones */
     narrEl.onended = done; narrEl.onerror = () => { if (speakingIdx === i) speak(); };
     narrEl.ontimeupdate = () => { const f = narrEl.currentTime / (narrEl.duration || 1); caption(parts[Math.min(parts.length - 1, Math.floor(f * parts.length))]); };
-    narrEl.src = s.audio; caption(parts[0]); const pr = narrEl.play(); if (pr && pr.catch) pr.catch(() => { if (speakingIdx === i) speak(); }); return;
+    narrEl.src = s.audio; caption(parts[0]); const pr = narrEl.play(); if (pr && pr.then) pr.then(() => { if (speakingIdx === i) narrOK = i; }, () => { if (speakingIdx === i) speak(); }); return;
   }
   speak();
 }
@@ -665,16 +671,19 @@ function activeIndex(s) {
   for (const g of segs) if (g.kind === 'dwell') { const d = s < g.a ? g.a - s : s > g.b ? s - g.b : 0; if (d < bd) { bd = d; best = g.i; } }
   return { i: best, near: bd < 0.3 };
 }
-const hl = document.getElementById('highlight'), hlYear = document.getElementById('hlYear'), hlLine = document.getElementById('hlLine');
-let hlTimer = 0, hlShown = -1, narrTimer = 0;
-let hlLate = 0;
-function showHighlight(i) {
-  if (hlShown === i || endShown) return; hlShown = i;
-  hl.classList.add('is-out', 'is-late'); clearTimeout(hlTimer); clearTimeout(hlLate);
-  const st = STORY[i]; if (!st.year && !st.line) return;
-  hlTimer = setTimeout(() => { hlYear.textContent = st.year; hlLine.innerHTML = st.line; hl.dataset.pos = st.pos || 'bl'; hl.classList.remove('is-out'); hlLate = setTimeout(() => hl.classList.remove('is-late'), 1300); }, 350);
+const hlYear = document.getElementById('hlYear'), hlLine = document.getElementById('hlLine');
+let narrTimer = 0, hlFor = -2;
+const sstep = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+/* highlights are tied to the flight: the date drifts past first on one side, the line follows a little later on the other */
+function updateHighlights(g, t) {
+  const live = g && g.kind === 'dwell' && !endShown && (STORY[g.i].year || STORY[g.i].line);
+  if (!live) { hlYear.style.opacity = 0; hlLine.style.opacity = 0; if (!g || g.kind !== 'dwell') hlFor = -2; return; }
+  if (hlFor !== g.i) { hlFor = g.i; const st = STORY[g.i], dir = g.i % 2 ? 1 : -1; hlYear.textContent = st.year; hlLine.innerHTML = st.line; hlYear.dataset.side = dir < 0 ? 'l' : 'r'; hlLine.dataset.side = dir < 0 ? 'r' : 'l'; }
+  const dir = g.i % 2 ? 1 : -1;
+  const oy = sstep(0.02, 0.16, t) * (1 - sstep(0.62, 0.84, t)), ol = sstep(0.26, 0.4, t) * (1 - sstep(0.84, 0.97, t));
+  hlYear.style.opacity = oy.toFixed(3); hlYear.style.transform = `translate3d(${(dir * (t - 0.3) * -90).toFixed(1)}px, ${(-t * 70).toFixed(1)}px, 0) scale(${(0.92 + t * 0.2).toFixed(3)})`;
+  hlLine.style.opacity = ol.toFixed(3); hlLine.style.transform = `translate3d(${(dir * (t - 0.5) * 110).toFixed(1)}px, ${(-t * 40).toFixed(1)}px, 0)`;
 }
-function hideHighlight() { clearTimeout(hlTimer); clearTimeout(hlLate); hl.classList.add('is-out', 'is-late'); hlShown = -1; }
 function setLocation(i) {
   if (i === cur) return; cur = i; setEra(i);
   clearTimeout(narrTimer); stopNarration();
@@ -684,19 +693,30 @@ function scrollToS(s) { window.scrollTo({ top: Math.round(s * unit()), behavior:
 
 const startVeil = document.getElementById('startVeil'), endVeil = document.getElementById('endVeil'), hint = document.getElementById('hint');
 const soundBtn = document.getElementById('soundBtn'), ccBtn = document.getElementById('ccBtn');
-function setSound(on) { soundOn = on; soundBtn.setAttribute('aria-pressed', String(on)); if (on) { unlockAudio(); padLevel(0.05); } else { if (unlockEl) unlockEl.pause(); stopNarration(); padLevel(0); } }
+soundBtn.classList.add('is-call'); soundBtn.setAttribute('aria-pressed', 'true');
+function setSound(on) { soundOn = on; soundBtn.classList.remove('is-call'); soundBtn.setAttribute('aria-pressed', String(on)); if (on) { unlockAudio(); padLevel(0.05); } else { if (unlockEl) unlockEl.pause(); stopNarration(); padLevel(0); } }
 let started = false;
 function begin(withSound) {
   if (!started) { started = true; startVeil.classList.add('is-leaving'); setTimeout(() => { startVeil.hidden = true; }, 700); hint.hidden = false; }
   if (withSound && !soundOn) { setSound(true); narrate(Math.max(0, cur)); }
 }
-document.getElementById('startBtn').addEventListener('click', () => begin(true));
-document.getElementById('silentBtn').addEventListener('click', () => begin(false));
 document.getElementById('againBtn').addEventListener('click', () => { window.scrollTo(0, 0); sTarget = sVis = sPrev = 0; });
-soundBtn.addEventListener('click', () => { setSound(!soundOn); if (soundOn) narrate(Math.max(0, cur)); });
+let audioReady = false, eatClick = false;
+/* sound is on by default; browsers only let it start after a tap, click or key press, so the first one unlocks it */
+function firstGesture(e) {
+  if (audioReady) return; audioReady = true;
+  ['pointerdown', 'touchend', 'keydown', 'click'].forEach(t => removeEventListener(t, firstGesture, true));
+  if (e && e.target && soundBtn.contains(e.target)) eatClick = true;
+  soundBtn.classList.remove('is-call');
+  if (!soundOn) return;
+  unlockAudio(); setEra(Math.max(0, cur)); padLevel(0.05);
+  if (narrOK !== cur) narrate(Math.max(0, cur));
+}
+['pointerdown', 'touchend', 'keydown', 'click'].forEach(t => addEventListener(t, firstGesture, true));
+soundBtn.addEventListener('click', () => { if (eatClick) { eatClick = false; return; } setSound(!soundOn); if (soundOn) narrate(Math.max(0, cur)); });
 ccBtn.addEventListener('click', () => { capOn = !capOn; ccBtn.setAttribute('aria-pressed', String(capOn)); caption(capText); });
 let endShown = false;
-function showEnd() { if (endShown) return; endShown = true; hideHighlight(); endVeil.hidden = false; endVeil.classList.remove('is-leaving'); }
+function showEnd() { if (endShown) return; endShown = true; endVeil.hidden = false; endVeil.classList.remove('is-leaving'); }
 function hideEnd() { if (!endShown) return; endShown = false; endVeil.classList.add('is-leaving'); setTimeout(() => { if (!endShown) endVeil.hidden = true; }, 600); }
 addEventListener('scroll', () => { sTarget = scrollY / unit(); if (!started && sTarget > 0.02) begin(false); if (sTarget > 0.12) hint.hidden = true; }, { passive: true });
 
@@ -741,10 +761,10 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (reduce.matches) sVis = sTarget; else {
     /* pace: the camera may not cross a location faster than its narration plays, so picture and voice stay together */
-    const g = segs.find(x => sVis >= x.a && sVis < x.b), pace = soundOn ? 0.9 : 0.45;
-    const secs = g ? (g.kind === 'dwell' ? (STORY[g.i].dur || 14) * pace : 3.6) : 3;
+    const g = segs.find(x => sVis >= x.a && sVis < x.b), pace = soundOn ? 0.38 : 0.25;
+    const secs = g ? (g.kind === 'dwell' ? (STORY[g.i].dur || 14) * pace : 1.7) : 3;
     const maxStep = ((g ? g.b - g.a : 0.35) / secs) * dt;
-    const want = (sTarget - sVis) * (1 - Math.exp(-dt * 3.5));
+    const want = (sTarget - sVis) * (1 - Math.exp(-dt * 5));
     sVis += Math.max(-maxStep, Math.min(maxStep, want));
   }
   const vel = Math.abs(sVis - sPrev) / Math.max(dt, 0.001); sPrev = sVis;
@@ -753,7 +773,8 @@ function frame(now) {
   if (transit && !inTransit && vel > 0.15) whoosh(1.8);
   inTransit = transit;
   const act = activeIndex(sVis);
-  if (act.near) { setLocation(act.i); showHighlight(act.i); } else hideHighlight();
+  if (act.near) setLocation(act.i);
+  { const g = segs.find(x => sVis >= x.a && sVis < x.b); updateHighlights(g, g ? (sVis - g.a) / (g.b - g.a) : 0); }
   const finale = (act.near && act.i === STORY.length - 1) || endShown;
   confettiOn = finale; dust.visible = !finale; confettiStep(dt);
   const lastSeg = segs[segs.length - 1];
@@ -781,10 +802,10 @@ function frame(now) {
 
 fontReady.then(() => {
   buildAll(); buildCurves(); buildDust(); resize(); buildSegments();
-  sTarget = sVis = sPrev = scrollY / unit();
+  window.scrollTo(0, 0); sTarget = sVis = sPrev = scrollY / unit();
   if (!reduce.matches) { LOC.forEach(L => scatter(L)); }
   requestAnimationFrame(frame);
-  window.__museum = { LOC, segs: () => segs, unit, get f() { return f; } };
+  window.__museum = { LOC, segs: () => segs, unit, updateHighlights, get f() { return f; } };
 });
 })();
 </script>
