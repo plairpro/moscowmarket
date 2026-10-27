@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Московский рынок. 50 лет</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Путешествие по 50 годам Московского рынка Казани: локации из фирменной плитки, голос рассказчика, без чтения.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Onest:wght@400;500;700&display=swap">
+<style>
+/* Hallmark · shape: guided 3D journey, one camera on rails through eleven tiled locations · genre: atmospheric · theme: custom · job: listen · idea: "a camera flies through the market's 50 years, every place built from the brand's ceramic tiles, while a narrator tells it" · vibe: "ceramic mosaic world, documentary voice, no reading"
+ * paper: oklch(93.5% 0.002 250) · accent: oklch(55% 0.15 38) · display: Dela Gothic One · body: Onest · hero: the camera waits before a wall of tiles laid as 50, then flies through the hole of the zero · nav: wordmark, sound, captions, pause · footer: the end card with address and hours · imagery: none, the tiled world is the picture · signature: the flight through the zero, then through the 1990s maze at eye height
+ * axes: light/grotesk-heavy/warm · posture: full-bleed stage · contrast: pass · fold: pass · brand: kznmarket.ru tiles (colours sampled from the user's screenshots 2026-10-27) · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H5 E5 S5 R4 V4 · weakest: P, no archive photographs; every location is built from tiles, slots for real footage named in the hand-off */
+
+/* layout: one fixed WebGL stage; a highlight (year and one line) sits bottom-left, controls top-right, a year rail along the bottom; a single light look in the brand's grey, chosen on purpose */
+:root {
+  color-scheme: light;
+  --color-paper: #e9e9e6;
+  --color-paper-2: #f6f6f3;
+  --color-tile: #cdd3d8;
+  --color-ink: #1c1d36;
+  --color-ink-2: #45485e;
+  --color-muted: #7f8394;
+  --color-accent: #b5441e;
+  --color-accent-deep: #93361a;
+  --color-accent-ink: #fffaf4;
+  --color-focus: #32316b;
+  --color-green-deep: #264b3b;
+  --color-green: #487455;
+  --color-indigo-deep: #32316b;
+  --color-indigo: #4450a0;
+  --color-tomato: #c84f2a;
+  --color-tomato-deep: #a03f1e;
+  --color-ochre-deep: #ad732b;
+  --color-ochre: #ca9043;
+  --color-gold: #f2dfa0;
+  --color-gold-deep: #b88c4a;
+  --color-gold-hi: #fffbe6;
+  --color-peach: #eaa57f;
+  --color-night: #1d2150;
+  --color-scrim: color-mix(in oklab, var(--color-paper) 72%, transparent);
+
+  --font-display: "Dela Gothic One", "Arial Black", system-ui, sans-serif;
+  --font-body: "Onest", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
+  --text-sm: 0.9375rem; --text-md: 1.0625rem; --text-lg: 1.25rem;
+  --text-year: clamp(4.5rem, 13vw, 12rem);
+  --text-line: clamp(1.35rem, 2.6vw, 2.4rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 700ms;
+  --container: 1600px;
+  --z-stage: 0; --z-hud: 100; --z-veil: 200;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-ink-2) var(--color-paper); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.track { display: none; }
+.gl .track { display: block; }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+::selection { background: var(--color-gold); color: var(--color-ink); }
+h1, h2 { margin: 0; font-family: var(--font-display); font-weight: 400; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+button { font: inherit; color: inherit; }
+a { color: inherit; text-underline-offset: 0.18em; }
+
+.stage { position: fixed; inset: 0; z-index: var(--z-stage); display: none; }
+.gl .stage { display: block; }
+.stage canvas { display: block; width: 100%; height: 100%; }
+
+/* buttons */
+.btn { --b: var(--color-accent); appearance: none; border: 2px solid var(--b); background: var(--b); color: var(--color-accent-ink); font-weight: 700; font-size: var(--text-md); line-height: 1; white-space: nowrap; padding: var(--space-md) var(--space-lg); border-radius: 0; cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-sm); text-decoration: none; transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out); }
+.btn:hover { --b: var(--color-accent-deep); }
+.btn:active { transform: translateY(1px) scale(0.98); }
+.btn:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; transition: none; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn--ghost { background: var(--color-paper-2); color: var(--color-ink); border-color: var(--color-ink); }
+.btn--ghost:hover { background: var(--color-ink); color: var(--color-paper); }
+.icon-btn { appearance: none; border: 0; background: var(--color-paper-2); color: var(--color-ink); height: 44px; min-width: 44px; padding: 0 var(--space-sm); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); font-weight: 500; font-size: var(--text-sm); cursor: pointer; transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.icon-btn:hover { background: var(--color-ink); color: var(--color-paper); }
+.icon-btn:active { transform: scale(0.97); }
+.icon-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; transition: none; }
+.icon-btn[aria-pressed="true"] { background: var(--color-indigo-deep); color: var(--color-gold-hi); }
+.icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: square; }
+.eq { display: inline-flex; gap: var(--space-3xs); align-items: flex-end; height: 14px; }
+.eq span { width: 3px; height: 14px; background: currentColor; transform-origin: bottom; transform: scaleY(0.3); }
+.is-speaking .eq span { animation: eq 0.9s var(--ease-out) infinite alternate; }
+.eq span:nth-child(2) { animation-delay: -0.3s; } .eq span:nth-child(3) { animation-delay: -0.6s; }
+@keyframes eq { from { transform: scaleY(0.25); } to { transform: scaleY(1); } }
+
+/* HUD */
+.hud { position: fixed; inset: 0; z-index: var(--z-hud); pointer-events: none; display: none; }
+.gl .hud { display: block; }
+.hud__top { position: absolute; top: env(safe-area-inset-top, 0px); left: 0; right: 0; padding-block: var(--space-md); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); }
+.wordmark { pointer-events: auto; display: inline-flex; align-items: center; gap: var(--space-sm); font-family: var(--font-display); font-size: 1.05rem; line-height: 1; white-space: nowrap; text-decoration: none; background: var(--color-paper-2); padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-sm); }
+.wordmark i { display: grid; grid-template-columns: repeat(3, 6px); gap: var(--space-3xs); }
+.wordmark i b { width: 6px; height: 6px; background: var(--color-tile); }
+.wordmark i b:nth-child(2n) { background: var(--color-tomato); }
+.wordmark i b:nth-child(5) { background: var(--color-green-deep); }
+.tools { pointer-events: auto; display: flex; gap: var(--space-2xs); }
+.hud::before { content: ""; position: absolute; left: 0; bottom: 0; width: min(100%, 60rem); height: 70%; background: radial-gradient(ellipse at 0% 100%, var(--color-scrim) 0%, var(--color-scrim) 35%, transparent 70%); }
+
+.highlight { position: absolute; left: max(var(--space-xl), env(safe-area-inset-left, 0px)); bottom: calc(112px + env(safe-area-inset-bottom, 0px)); max-width: min(46rem, calc(100% - 2 * var(--space-lg))); display: grid; gap: var(--space-sm); }
+.highlight__year { font-family: var(--font-display); font-size: var(--text-year); line-height: 0.82; letter-spacing: -0.035em; color: var(--color-ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.highlight__line { font-family: var(--font-display); font-size: var(--text-line); line-height: 1.05; color: var(--color-ink); max-width: 18ch; }
+.highlight__line mark { background: var(--color-accent); color: var(--color-accent-ink); padding: 0 0.18em; }
+.highlight > * { transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out); }
+.highlight.is-out > * { opacity: 0; transform: translateY(18px); }
+.highlight .highlight__line { transition-delay: 140ms; }
+.highlight.is-out .highlight__line { transition-delay: 0ms; }
+
+.hint { position: absolute; right: max(var(--space-xl), env(safe-area-inset-right, 0px)); bottom: calc(112px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: var(--space-sm); background: var(--color-paper-2); padding: var(--space-sm) var(--space-md); font-weight: 500; font-size: var(--text-sm); }
+.hint[hidden] { display: none; }
+.hint__tiles { display: grid; gap: var(--space-3xs); }
+.hint__tiles b { width: 8px; height: 8px; background: var(--color-tomato); animation: hint 1.4s var(--ease-out) infinite; }
+.hint__tiles b:nth-child(2) { animation-delay: 0.15s; background: var(--color-ochre); } .hint__tiles b:nth-child(3) { animation-delay: 0.3s; background: var(--color-green); }
+@keyframes hint { 0%, 100% { opacity: 0.25; transform: translateY(-3px); } 50% { opacity: 1; transform: translateY(3px); } }
+.caption { position: absolute; left: 50%; bottom: calc(112px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(calc(100% - 32px), 44rem); background: var(--color-ink); color: var(--color-paper); padding: var(--space-sm) var(--space-md); font-size: var(--text-md); line-height: 1.45; text-align: center; }
+
+.rail { pointer-events: auto; position: absolute; left: 0; right: 0; bottom: env(safe-area-inset-bottom, 0px); padding-block: var(--space-md) var(--space-lg); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); }
+.rail ol { list-style: none; margin: 0 auto; padding: 0; max-width: var(--container); display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: var(--space-3xs); }
+.rail button { appearance: none; width: 100%; border: 0; background: transparent; cursor: pointer; padding: 0 0 var(--space-2xs); display: grid; gap: var(--space-xs); text-align: left; color: var(--color-ink-2); font-size: 0.8125rem; font-weight: 500; font-variant-numeric: tabular-nums; transition: color var(--dur-short) var(--ease-out); }
+.rail button::before { content: ""; height: 6px; background: var(--color-tile); }
+.rail button:hover { color: var(--color-ink); }
+.rail button.is-past::before { background: var(--color-ink); }
+.rail button[aria-current="true"] { color: var(--color-ink); }
+.rail button[aria-current="true"]::before { background: var(--color-tomato); }
+.rail button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; transition: none; }
+
+/* veil: start and end cards */
+.veil { position: fixed; inset: 0; z-index: var(--z-veil); display: none; align-items: center; padding-block: var(--space-2xl); padding-left: max(var(--space-xl), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-xl), env(safe-area-inset-right, 0px)); background: linear-gradient(90deg, var(--color-scrim) 0%, var(--color-scrim) 40%, transparent 75%); transition: opacity var(--dur-long) var(--ease-out); }
+.gl .veil { display: flex; }
+.gl .veil[hidden] { display: none; }
+.veil.is-leaving { opacity: 0; pointer-events: none; }
+.veil__in { width: min(100%, 36rem); display: grid; gap: var(--space-lg); }
+.veil h1 { font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: 0.96; letter-spacing: -0.02em; }
+.veil p { font-size: var(--text-lg); color: var(--color-ink-2); max-width: 30ch; }
+.veil__actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.veil small { font-size: var(--text-sm); color: var(--color-ink-2); }
+.veil dl { margin: 0; display: grid; gap: var(--space-xs); }
+.veil dl div { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--space-md); }
+.veil dt { color: var(--color-ink-2); font-size: var(--text-sm); }
+.veil dd { margin: 0; font-weight: 500; }
+
+/* without WebGL or script: the story as a plain list */
+.fallback { max-width: 52rem; margin-inline: auto; padding-block: var(--space-2xl); padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px)); display: grid; gap: var(--space-xl); }
+.gl .fallback { display: none; }
+.fallback h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1; }
+.fallback ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-lg); }
+.fallback li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: var(--space-md); }
+.fallback li b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; }
+
+@media (max-width: 760px) {
+  .highlight { left: max(var(--space-md), env(safe-area-inset-left, 0px)); bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .rail button { font-size: 0; gap: 0; }
+  .rail button::before { height: 8px; }
+  .tools .lbl { display: none; }
+  .veil { align-items: flex-end; background: linear-gradient(0deg, var(--color-scrim) 0%, var(--color-scrim) 55%, transparent 90%); }
+  .veil dl div { grid-template-columns: 7rem minmax(0, 1fr); }
+  .caption { bottom: calc(240px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+<div class="stage" aria-hidden="true"><canvas id="world"></canvas></div>
+<div class="track" id="track" aria-hidden="true"></div>
+
+<div class="hud" id="hud">
+  <div class="hud__top">
+    <a class="wordmark" href="https://kznmarket.ru/" target="_blank" rel="noopener"><i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i><span>Московский рынок</span></a>
+    <div class="tools">
+      <button class="icon-btn" id="soundBtn" type="button" aria-pressed="false" aria-label="Звук"><span class="eq" aria-hidden="true"><span></span><span></span><span></span></span><span class="lbl">Звук</span></button>
+      <button class="icon-btn" id="ccBtn" type="button" aria-pressed="false" aria-label="Субтитры"><span aria-hidden="true">CC</span></button>
+          </div>
+  </div>
+  <div class="highlight is-out" id="highlight" aria-live="polite">
+    <div class="highlight__year" id="hlYear">50</div>
+    <div class="highlight__line" id="hlLine">Полвека под одним куполом</div>
+  </div>
+  <div class="caption" id="caption" hidden></div>
+  <div class="hint" id="hint" hidden><span class="hint__tiles" aria-hidden="true"><b></b><b></b><b></b></span>Крутите вниз, чтобы лететь</div>
+  <nav class="rail" aria-label="Локации"><ol id="rail"></ol></nav>
+</div>
+
+<div class="veil" id="startVeil">
+  <div class="veil__in">
+    <h1>Полвека под одним куполом</h1>
+    <p>Путешествие по Московскому рынку Казани, с 1930 по 2026 год, под голос рассказчика.</p>
+    <div class="veil__actions">
+      <button class="btn" id="startBtn" type="button"><span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>Начать путешествие</button>
+      <button class="btn btn--ghost" id="silentBtn" type="button">Без звука</button>
+    </div>
+    <small>Лучше в наушниках. Крутите колесо или листайте пальцем: камера летит, пока вы скроллите.</small>
+  </div>
+</div>
+
+<div class="veil" id="endVeil" hidden>
+  <div class="veil__in">
+    <h1>Приходите под купол</h1>
+    <dl>
+      <div><dt>Адрес</dt><dd>Казань, улица Шамиля Усманова, 1</dd></div>
+      <div><dt>Продавцы</dt><dd>каждый день с 8:00 до 20:00</dd></div>
+      <div><dt>Кухни бистро</dt><dd>каждый день с 8:00 до 21:00</dd></div>
+    </dl>
+    <div class="veil__actions">
+      <button class="btn" id="againBtn" type="button">Пролететь ещё раз</button>
+      <a class="btn btn--ghost" href="https://kznmarket.ru/" target="_blank" rel="noopener">Сайт рынка</a>
+    </div>
+  </div>
+</div>
+
+<main class="fallback" id="fallback">
+  <h1>Московский рынок. 50 лет</h1>
+  <ol id="fallbackList">
+    <li><b>1930</b><span>Между улицами Энергетиков и Декабристов открывается первая рыночная площадка.</span></li>
+    <li><b>1976</b><span>Крытый лабаз с парусным сводом, «Тюбетейка». Колхозный рынок Московского района.</span></li>
+    <li><b>1990-е</b><span>13 частных объектов и лабиринт павильонов.</span></li>
+    <li><b>2013</b><span>Рынок выставлен на торги за 250 млн рублей, в 2015 году цена снижена до 175 млн.</span></li>
+    <li><b>2022</b><span>ООО «Казантик» покупает рынок за 175 млн рублей; концепция Ginza Project, проект DA BUREAU.</span></li>
+    <li><b>2025</b><span>20 мая тестовое открытие, 28 ноября официальное.</span></li>
+    <li><b>2026</b><span>50 лет. Продавцы с 8:00 до 20:00, кухни бистро с 8:00 до 21:00.</span></li>
+  </ol>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+/* ================= story ================= */
+const STORY = [
+  { id: 'fifty', year: '50', line: 'Полвека под одним куполом',
+    say: 'Московский рынок Казани. Полвека под одним куполом. Сейчас мы пролетим сквозь его историю: от первой рыночной площадки тысяча девятьсот тридцатого года до юбилея в две тысячи двадцать шестом.' },
+  { id: 'field', year: '1930', line: 'Первая рыночная площадка',
+    say: 'Тысяча девятьсот тридцатый год. Между улицами Энергетиков и Декабристов впервые открывается рыночная площадка. Сегодня у этого места адрес: улица Шамиля Усманова, дом один. Отсюда начинается Волгоградская улица.' },
+  { id: 'dome', year: '1976', line: 'Лабаз, похожий на <mark>тюбетейку</mark>',
+    say: 'Тысяча девятьсот семьдесят шестой. Здесь вырастает крытое здание: лабаз с парусным сводом. В его основе стандартный советский проект, похожий свод был и у Чеховского рынка. Купольный силуэт становится главной приметой, и казанцы связывают его с образом тюбетейки. Открывается колхозный рынок Московского района.' },
+  { id: 'hall', year: 'СССР', line: 'Рынок на четыре района',
+    say: 'С самого открытия здесь продают продукты, одежду и бытовые товары. Рынок обслуживает жителей Московского, Кировского, Ново-Савиновского и Авиастроительного районов и быстро становится одним из крупнейших в Казани, наравне с Центральным и Приволжским. Это не только место торговли, но и часть повседневной жизни района.' },
+  { id: 'maze', year: '1990-е', line: '<mark>13</mark> хозяев и лабиринт павильонов',
+    say: 'Девяностые. Город распродаёт торговые площадки предпринимателям, и со временем здесь появляется тринадцать частных торговых объектов. Вокруг крытого здания вырастают вещевые и продуктовые павильоны. Рынок, как многие крупные торговые точки страны, оказывается в зоне влияния криминальных структур. А лабиринты павильонов становятся частью городской памяти: в них было легко заблудиться. Некоторые продавцы работали здесь не одно десятилетие.' },
+  { id: 'crowd', year: '2000', line: 'Тесно, но открыто',
+    say: 'Двухтысячные. Павильоны расширяют и реконструируют, но рынок по-прежнему перегружен. Обсуждают новый рынок в Ново-Савиновском районе. В две тысячи шестом плотная застройка и санитарные нормы грозят закрытием, но рынок продолжает работу. В две тысячи восьмом он занимает второе место в городском конкурсе рынков, а его управляющую компанию признают лучшей. В две тысячи десятом по улице Энергетиков проходит девятый трамвай. А в две тысячи одиннадцатом ярмарку на рынке посещает Рустам Минниханов.' },
+  { id: 'bars', year: '2013', line: 'На торгах: <mark>250</mark>, потом 175 млн',
+    say: 'Две тысячи тринадцатый. Рынок впервые выставляют на торги за двести пятьдесят миллионов рублей. В две тысячи пятнадцатом стартовую цену снижают до ста семидесяти пяти миллионов. В две тысячи двадцатом его снова выставляют на торги.' },
+  { id: 'blueprint', year: '2022', line: 'Новый владелец и новый чертёж',
+    say: 'Март две тысячи двадцать второго. Объект уходит с аукциона со значительным дисконтом: московское ООО «Казантик» предпринимателя Валерия Аржинта покупает рынок за сто семьдесят пять миллионов рублей. Концепцию обновления разрабатывает команда холдинга Гинза Проджект, который обновлял Даниловский рынок в Москве. Архитектурный проект делает петербургское бюро Да Бюро. Почти пятьдесят лет здание не знало капитального ремонта.' },
+  { id: 'scaffold', year: '2023', line: 'Купол перекладывают заново',
+    say: 'Май две тысячи двадцать третьего: начинается масштабная реконструкция. В сентябре исторический лабаз закрывают, торговцам предлагают павильоны на территории базара. Обновляют коммуникации, меняют витражи и покрытие купола, укрепляют и расширяют антресоли. Появляются вентиляция, кондиционирование, новые витрины, склады и ветеринарная лаборатория.' },
+  { id: 'opening', year: '2025', line: '<mark>300</mark> мест в бистро под куполом',
+    say: 'Двадцатое мая две тысячи двадцать пятого. Обновлённый рынок открывается в тестовом режиме: фермерские ряды, открытые кухни городских бистро на триста мест, зоны отдыха. Внутри около ста пятидесяти торговых мест, на улице ещё около двухсот. Вокруг амфитеатр, общественная теплица, ярмарочные ряды и зелень. Двадцать восьмого ноября проходит официальное открытие с участием Рустама Минниханова и мэра Казани Ильсура Метшина.' },
+  { id: 'gold', year: '2026', line: 'Пятьдесят лет, каждый день',
+    say: 'Две тысячи двадцать шестой. Московскому рынку пятьдесят лет. Он работает каждый день: продавцы с восьми утра до восьми вечера, кухни бистро до девяти. Приходите под купол.' }
+];
+
+const canvas = document.getElementById('world');
+let renderer = null;
+try { if (window.THREE) renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); } catch (e) { renderer = null; }
+if (!renderer) return; // the fallback list stays
+document.documentElement.classList.add('js', 'gl');
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const css = getComputedStyle(document.documentElement);
+const tok = n => css.getPropertyValue(n).trim();
+const PAL = {
+  P: tok('--color-tile'), W: tok('--color-paper-2'), G: tok('--color-green-deep'), g: tok('--color-green'),
+  I: tok('--color-indigo-deep'), i: tok('--color-indigo'), T: tok('--color-tomato'), t: tok('--color-tomato-deep'),
+  O: tok('--color-ochre-deep'), o: tok('--color-ochre'), y: tok('--color-gold'), L: tok('--color-gold-hi'), D: tok('--color-gold-deep'),
+  p: tok('--color-peach'), N: tok('--color-night'), K: tok('--color-ink'), B: tok('--color-paper')
+};
+const COL = {}; for (const k in PAL) COL[k] = new THREE.Color(PAL[k]);
+const GOLDRAMP = ['O', 'D', 'o', 'y', 'L', 'p'].map(k => COL[k]);
+function goldAt(x, out) { x = Math.max(0, Math.min(0.999, x)) * (GOLDRAMP.length - 1); const i = Math.floor(x); return out.copy(GOLDRAMP[i]).lerp(GOLDRAMP[i + 1], x - i); }
+
+function hash(x, y, s = 0) { let h = (Math.round(x * 13) * 374761393 + Math.round(y * 7) * 668265263 + s * 2147483647) | 0; h = (h ^ (h >>> 13)) * 1274126177; h ^= h >>> 16; return (h >>> 0) / 4294967295; }
+function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+
+/* ================= three setup ================= */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(PAL.B);
+scene.fog = new THREE.Fog(PAL.B, 60, 270);
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 520);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8cbb8, 0.78));
+const sun = new THREE.DirectionalLight(0xfff4e0, 0.62); sun.position.set(-0.6, 1, 0.45); scene.add(sun);
+const BOX = new THREE.BoxGeometry(1, 1, 1);
+const MAT = new THREE.MeshLambertMaterial({ color: 0xffffff });
+
+/* ================= text masks ================= */
+const fontReady = (document.fonts && document.fonts.load) ? Promise.race([document.fonts.load('400 80px "Dela Gothic One"'), new Promise(r => setTimeout(r, 2500))]).catch(() => {}) : Promise.resolve();
+function textMask(txt, w, h) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+  let fs = h * 1.02; const font = s => `400 ${s}px "Dela Gothic One", "Arial Black", sans-serif`; g.font = font(fs);
+  const mw = g.measureText(txt).width; if (mw > w * 0.96) { fs *= w * 0.96 / mw; g.font = font(fs); }
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#000'; g.strokeStyle = '#000'; g.lineJoin = 'round'; g.lineWidth = Math.max(1.5, fs * 0.05);
+  g.fillText(txt, w / 2, h / 2 + fs * 0.04); g.strokeText(txt, w / 2, h / 2 + fs * 0.04);
+  const d = g.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 110 ? 1 : 0;
+  // holes: empty cells not reachable from the border
+  const reach = new Uint8Array(w * h), q = [];
+  for (let x = 0; x < w; x++) q.push(x, (h - 1) * w + x);
+  for (let y = 0; y < h; y++) q.push(y * w, y * w + w - 1);
+  while (q.length) { const i = q.pop(); if (reach[i] || m[i]) continue; reach[i] = 1; const x = i % w, y = (i / w) | 0; if (x > 0) q.push(i - 1); if (x < w - 1) q.push(i + 1); if (y > 0) q.push(i - w); if (y < h - 1) q.push(i + w); }
+  return { m, hole: i => !m[i] && !reach[i] };
+}
+const PAT = {
+  tomato: ['...G....', '..TGT...', '.TtTtT..', 'TtTtTtT.', '.TtTtT..', '..TtT...', 'gG.G.Gg.', '........'],
+  flower: ['...I....', '..IiI...', '.IiPiI..', '..IiI...', '...g....', '..ggg...', '.g.g.g..', '........']
+};
+const pat = (n, x, y) => { const c = PAT[n][((y % 8) + 8) % 8][((x % 8) + 8) % 8]; return c === '.' ? null : c; };
+
+/* ================= dome: a sail vault over a square hall ================= */
+function buildDome(add, o) {
+  const half = 15, wallH = 8, R = Math.hypot(half, half), k = 0.45;
+  const roofY = (x, z) => wallH + k * Math.sqrt(Math.max(0, R * R - x * x - z * z));
+  const keys = Object.assign({ glass: 'P', glass2: 'L', mull: 'I', plinth: 'G', shell: 'I', shell2: 'i', rib: 'i', rim: 'y', lantern: 'y' }, o.keys || {});
+  const skip = o.skip || (() => false);
+  const sides = [];
+  for (let s = -half; s <= half; s++) { sides.push([s, half], [s, -half]); if (Math.abs(s) < half) sides.push([-half, s], [half, s]); }
+  for (const [x, z] of sides) {
+    const top = roofY(x, z), along = Math.abs(z) === half ? x : z;
+    for (let y = 0; y < top - 0.4; y++) {
+      if (o.door && z === half && Math.abs(x) < 3 && y < 5) continue;
+      let key = y === 0 ? keys.plinth : (Math.abs(along) % 3 === 0 || y === wallH ? keys.mull : (hash(x, y + z, 3) > 0.72 ? keys.glass2 : keys.glass));
+      if (skip('wall', x, y, z, along)) continue;
+      add(x, y + 0.5, z, key, 0.9, 0.9, 0.9);
+    }
+  }
+  for (let x = -half; x <= half; x++) for (let z = -half; z <= half; z++) {
+    const y = roofY(x, z);
+    const lo = Math.min(roofY(x + 1, z), roofY(x - 1, z), roofY(x, z + 1), roofY(x, z - 1));
+    const edge = Math.abs(x) === half || Math.abs(z) === half;
+    const rib = Math.abs(x) === Math.abs(z) || x === 0 || z === 0;
+    if (skip('shell', x, y, z, edge || rib)) continue;
+    const key = edge ? keys.rim : rib ? keys.rib : (hash(x, z, 9) > 0.82 ? keys.shell2 : keys.shell);
+    for (let yy = y; yy > lo - 0.9 && yy > wallH - 0.5; yy -= 0.9) add(x, yy, z, key, 0.92, 0.9, 0.92);
+  }
+  const top = roofY(0, 0);
+  for (let y = 1; y <= 3; y++) for (const [dx, dz] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) if (y < 3 || (!dx && !dz)) add(dx, top + y, dz, keys.lantern, 0.9, 0.9, 0.9);
+}
+function plaza(add, r, step = 2) { for (let x = -r; x <= r; x += step) for (let z = -r; z <= r; z += step) { if (x * x + z * z > r * r * 1.1) continue; add(x, 0, z, ((x + z) / step) % 2 ? 'P' : 'W', step * 0.93, 0.25, step * 0.93); } }
+
+/* ================= locations ================= */
+const SPACING = 170;
+const builders = {
+  fifty(add) {
+    const W = 64, H = 30, mk = textMask('50', W, H);
+    let hx = 0, hy = 0, hn = 0;
+    for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
+      const i = r * W + c, x = c - W / 2 + 0.5, y = H - r + 1;
+      if (mk.m[i]) {
+        const edge = !mk.m[i - 1] || !mk.m[i + 1] || !mk.m[i - W] || !mk.m[i + W];
+        add(x, y, 0, edge ? 'G' : (pat(c < W / 2 ? 'tomato' : 'flower', c, r) || 'y'), 0.92, 0.92, 0.6);
+      } else if (mk.hole(i)) { if (c > W / 2) { hx += x; hy += y; hn++; } }
+      else if ((c + r) % 2 === 0 && hash(c, r, 2) > 0.35) add(x, y, -0.2, 'P', 0.9, 0.9, 0.3);
+    }
+    for (let x = -40; x <= 40; x += 2) for (let z = -30; z <= 40; z += 2) if (hash(x, z, 4) > 0.45) add(x, 0, z, (x + z) % 4 ? 'P' : 'W', 1.8, 0.25, 1.8);
+    if (hn > 6) { hx /= hn; hy /= hn; } else { hx = 16; hy = H + 6; }
+    return { cams: [[[hx * 0.25, hy, 58], [hx * 0.35, hy - 1, 0]], [[hx, hy, 16], [hx, hy, 0]], [[hx, hy, -10], [hx, hy - 1, -50]]] };
+  },
+  field(add) {
+    for (let x = -32; x <= 32; x++) for (let z = -32; z <= 32; z++) {
+      if (x * x + z * z > 1000) continue;
+      const key = Math.abs(x) < 3 ? (hash(x, z, 1) > 0.5 ? 'o' : 'O') : (hash(x, z, 2) > 0.6 ? 'G' : 'g');
+      add(x, 0, z, key, 0.92, 0.3 + hash(x, z, 5) * 0.15, 0.92);
+    }
+    let n = 0;
+    for (const zc of [-16, -5, 6]) for (const xc of [-9, 9]) {
+      n++; const awn = n % 2 ? 'T' : 'I';
+      for (let x = -3; x <= 3; x++) for (let z = -2; z <= 2; z++) {
+        const X = xc + x, Z = zc + z;
+        if (Math.abs(x) === 3 && Math.abs(z) === 2) for (let y = 1; y <= 4; y++) add(X, y, Z, 'O', 0.6, 0.9, 0.6);
+        add(X, 2, Z, (x + z) % 2 ? 'o' : 'O', 0.92, 0.5, 0.92);
+        const r = hash(X, Z, n);
+        if (Math.abs(x) < 3 && Math.abs(z) < 2 && r > 0.35) add(X, 2.8, Z, r > 0.75 ? 't' : (n % 3 ? 'T' : 'i'), 0.7, 0.7, 0.7);
+        const dz = (xc < 0 ? z : -z) + 2; add(X, 5.4 - dz * 0.35, Z, (x + 3) % 2 ? awn : 'W', 0.98, 0.25, 0.98);
+      }
+    }
+    return { cams: [[[0, 24, 48], [0, 0, 0]], [[0, 5.5, 14], [0, 3, -6]], [[0, 7, -24], [0, 6, -70]]] };
+  },
+  dome(add) {
+    plaza(add, 28);
+    buildDome(add, { door: true });
+    return { cams: [[[40, 24, 56], [0, 10, 0]], [[-32, 15, 34], [0, 10, 0]], [[0, 4, 24], [0, 3.5, 0]]] };
+  },
+  hall(add) {
+    for (let x = -20; x <= 20; x++) for (let z = -22; z <= 22; z++) add(x, 0, z, (x + z) % 2 ? 'P' : 'W', 0.94, 0.25, 0.94);
+    const goods = [
+      r => [[0, 'T'], [0.7, r > 0.5 ? 't' : 'T']],
+      r => [[0, 'g'], [0.8, r > 0.4 ? 'I' : 'i'], [1.5, 'P']],
+      r => [[0, r > 0.5 ? 'I' : 'T'], [0.6, r > 0.5 ? 'I' : 'T']],
+      r => [[0, 'y'], [0.7, r > 0.6 ? 'D' : 'y']]
+    ];
+    [-10, -4, 4, 10].forEach((xc, row) => {
+      for (let z = -18; z <= 18; z++) for (let x = 0; x < 2; x++) {
+        const X = xc + x - 0.5, Z = z;
+        add(X, 0.7, Z, 'O', 0.94, 0.9, 0.94); add(X, 1.6, Z, 'W', 0.94, 0.6, 0.94);
+        const seg = Math.floor((z + 18) / 6 + row) % 4, r = hash(X, Z, row);
+        if (r > 0.2) for (const [dy, k] of goods[seg](r)) add(X, 2.3 + dy, Z, k, 0.7, 0.65, 0.7);
+      }
+    });
+    for (let z = -20; z <= 20; z += 5) for (let x = -20; x <= 20; x++) add(x, 7 + 8 * Math.sqrt(Math.max(0, 1 - (x / 20.5) ** 2)), z, Math.abs(x) % 5 === 0 ? 'y' : 'I', 0.92, 0.92, 0.92);
+    for (let z = -22; z <= 22; z++) for (const x of [-20, 20]) for (let y = 1; y < 7; y++) add(x, y, z, z % 3 ? 'P' : 'I', 0.92, 0.92, 0.92);
+    return { cams: [[[0, 3.4, 26], [0, 2.8, 0]], [[0, 3.1, 2], [0, 3, -20]], [[0, 5, -19], [0, 6, -60]]] };
+  },
+  maze(add) {
+    const N = 10, CELL = 2.4, gw = N * 2 + 1, g = new Uint8Array(gw * gw).fill(1), r = rng(1990);
+    const seen = new Uint8Array(N * N), st = [[0, 0]]; seen[0] = 1; g[gw + 1] = 0;
+    while (st.length) {
+      const [cx, cy] = st[st.length - 1];
+      const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => [cx + dx, cy + dy, dx, dy]).filter(([a, b]) => a >= 0 && b >= 0 && a < N && b < N && !seen[b * N + a]);
+      if (!nb.length) { st.pop(); continue; }
+      const [a, b, dx, dy] = nb[Math.floor(r() * nb.length)];
+      seen[b * N + a] = 1; g[(cy * 2 + 1 + dy) * gw + cx * 2 + 1 + dx] = 0; g[(b * 2 + 1) * gw + a * 2 + 1] = 0; st.push([a, b]);
+    }
+    const start = gw * (gw - 2), end = gw + gw - 1; g[start] = 0; g[end] = 0; // in at the near-left edge, out at the far-right edge
+    const prev = new Int32Array(gw * gw).fill(-1), q = [start]; prev[start] = start;
+    while (q.length) { const c = q.shift(); if (c === end) break; const x = c % gw, y = (c / gw) | 0; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= gw || ny >= gw) continue; const ni = ny * gw + nx; if (g[ni] || prev[ni] !== -1) continue; prev[ni] = c; q.push(ni); } }
+    const path = []; for (let c = end; c !== start && c !== -1; c = prev[c]) path.push(c); path.push(start); path.reverse();
+    const P = c => [((c % gw) - gw / 2 + 0.5) * CELL, (Math.floor(c / gw) - gw / 2 + 0.5) * CELL];
+    const colors = ['O', 'o', 'T', 'I', 'g', 'o', 't', 'i'];
+    for (let y = 0; y < gw; y++) for (let x = 0; x < gw; x++) {
+      const [X, Z] = P(y * gw + x);
+      add(X, 0, Z, (x + y) % 2 ? 'P' : 'W', CELL * 0.96, 0.25, CELL * 0.96);
+      if (!g[y * gw + x]) continue;
+      const h = 2 + Math.floor(hash(x, y, 7) * 3), body = colors[Math.floor(hash(x, y, 8) * colors.length)];
+      for (let k = 0; k < h; k++) add(X, 0.6 + k * 0.95, Z, k === h - 1 ? 'W' : (k % 2 ? body : 'P'), CELL * 0.94, 0.9, CELL * 0.94);
+      add(X, 0.6 + h * 0.95 - 0.35, Z, hash(x, y, 9) > 0.5 ? 'T' : 'I', CELL * 1.02, 0.2, CELL * 1.02);
+    }
+    const cams = [[[0, 32, 40], [0, 0, 0]]];
+    const [sx, sz] = P(start); cams.push([[sx - CELL * 1.6, 1.8, sz], [sx + CELL, 1.6, sz]]);
+    for (let i = 0; i < path.length; i += 2) { const [x, z] = P(path[i]), [lx, lz] = P(path[Math.min(path.length - 1, i + 3)]); cams.push([[x, 1.7, z], [lx, 1.6, lz]]); }
+    const [ex, ez] = P(end); cams.push([[ex + CELL * 2, 2.5, ez], [ex + CELL * 8, 4, ez - 6]]);
+    return { cams, speed: 0.75 };
+  },
+  crowd(add, extra) {
+    for (let bx = -10; bx <= 10; bx++) for (let bz = -7; bz <= 3; bz++) {
+      const r = hash(bx, bz, 11); if (r < 0.06) continue;
+      const h = 1 + Math.floor(hash(bx, bz, 12) * 3), key = ['T', 'I', 'G', 'o', 'i', 't', 'g', 'O'][Math.floor(r * 8)];
+      for (let k = 0; k < h; k++) add(bx * 3, 0.5 + k * 0.95, bz * 3, k === h - 1 ? key : 'P', 2.7, 0.9, 2.7);
+    }
+    for (let x = -48; x <= 48; x++) { add(x, 0.15, 13, 'K', 0.98, 0.3, 0.35); add(x, 0.15, 15.6, 'K', 0.98, 0.3, 0.35); if (x % 2 === 0) add(x, 0.05, 14.3, 'O', 0.4, 0.15, 3.6); }
+    for (let x = -48; x <= 48; x += 2) for (let z = 18; z <= 26; z += 2) add(x, 0, z, (x / 2 + z / 2) % 2 ? 'P' : 'W', 1.85, 0.25, 1.85);
+    // podium: second place in gold
+    [[-3, 5, 'y'], [0, 7, 'P'], [3, 3, 'P']].forEach(([dx, h, k]) => { for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) for (let y = 0; y < h; y++) add(30 + dx + x * 0.96, 0.5 + y * 0.95, 22 + z * 0.96, y === h - 1 ? (k === 'y' ? 'D' : 'W') : k, 0.92, 0.9, 0.92); });
+    extra.tram = true;
+    return { cams: [[[0, 46, 42], [0, 0, -6]], [[-30, 6, 26], [0, 3, 14]], [[22, 9, 36], [30, 5, 22]]] };
+  },
+  bars(add) {
+    for (let x = -24; x <= 24; x++) for (let z = -12; z <= 14; z++) add(x, 0, z, (x + z) % 2 ? 'P' : 'W', 0.94, 0.25, 0.94);
+    const tower = (cx, h, a, b, ghost) => { for (let y = 0; y < h; y++) for (let x = 0; x < 4; x++) for (let z = 0; z < 4; z++) {
+      const ex = x === 0 || x === 3, ez = z === 0 || z === 3; if (!ex && !ez) continue;
+      if (ghost && !(ex && ez) && y % 4) continue;
+      add(cx + x - 1.5, 0.6 + y, z - 1.5, ghost ? 'P' : (hash(x + cx, y, z) > 0.75 ? b : a), 0.92, 0.92, 0.92); } };
+    tower(-8, 25, 'O', 'D', false); tower(0, 17.5, 'o', 'y', false); tower(8, 17.5, 'P', 'P', true);
+    return { cams: [[[0, 2.5, 34], [0, 15, 0]], [[-16, 27, 20], [-8, 24, 0]], [[12, 19, 18], [0, 17, 0]]] };
+  },
+  blueprint(add) {
+    for (let x = -28; x <= 28; x++) for (let z = -28; z <= 28; z++) add(x, 0, z, (x % 5 === 0 || z % 5 === 0) ? 'i' : 'N', 0.96, 0.25, 0.96);
+    buildDome(add, { keys: { glass: 'N', glass2: 'N', mull: 'L', plinth: 'L', shell: 'N', shell2: 'N', rib: 'y', rim: 'L', lantern: 'y' },
+      skip: (part, x, y, z, flag) => part === 'wall' ? !(Math.abs(flag) % 5 === 0 || y === 0 || y === 8) : !flag });
+    return { cams: [[[0, 52, 8], [0, 0, 0]], [[34, 18, 30], [0, 8, 0]], [[0, 12, 38], [0, 10, 0]]] };
+  },
+  scaffold(add) {
+    plaza(add, 28);
+    buildDome(add, { keys: { shell: 'I', shell2: 'y', rib: 'y', rim: 'L' } });
+    for (let s = -18; s <= 18; s += 3) for (const [x, z] of [[s, 18], [s, -18], [18, s], [-18, s]]) for (let y = 0; y < 14; y++) add(x, y + 0.5, z, 'O', 0.3, 0.98, 0.3);
+    for (let y = 3; y < 14; y += 3) for (let s = -18; s <= 18; s++) for (const [x, z] of [[s, 18], [s, -18], [18, s], [-18, s]]) add(x, y + 0.5, z, s % 3 ? 'o' : 'O', 0.98, 0.25, 0.4);
+    return { cams: [[[40, 20, 40], [0, 9, 0]], [[-42, 15, 12], [0, 9, 0]], [[-12, 32, -38], [0, 11, 0]]], build: 'bottom-up' };
+  },
+  opening(add) {
+    plaza(add, 36);
+    buildDome(add, { keys: { glass: 'L', glass2: 'y', mull: 'D', plinth: 'G', shell: 'Y', shell2: 'Y', rib: 'L', rim: 'T', lantern: 'L' } });
+    const tree = (cx, cz) => { for (let y = 0; y < 3; y++) add(cx, y + 0.5, cz, 'O', 0.7, 0.98, 0.7);
+      for (let x = -2; x <= 2; x++) for (let y = -2; y <= 2; y++) for (let z = -2; z <= 2; z++) if (x * x + y * y + z * z <= 5) add(cx + x, 5 + y, cz + z, hash(x + cx, y, z + cz) > 0.5 ? 'G' : 'g', 0.95, 0.95, 0.95); };
+    [[-24, 18], [24, 18], [-26, -6], [26, -6], [-14, -26], [14, -26], [-30, 6], [30, 6]].forEach(([x, z]) => tree(x, z));
+    for (let a = 0; a <= 24; a++) for (let s = 0; s < 4; s++) { const ang = Math.PI * (a / 24), rr = 7 + s * 1.3; add(Math.cos(ang) * rr, 0.3 + s * 0.6, 34 + Math.sin(ang) * rr * 0.6, s % 2 ? 'o' : 'O', 1.3, 0.6, 1.3); }
+    for (let x = 0; x < 8; x++) for (let z = 0; z < 5; z++) for (let y = 0; y < 5; y++) { if (x && x < 7 && z && z < 4 && y < 4) { if (y === 0) add(-30 + x, 1.2, -22 + z, 'g', 0.8, 0.8, 0.8); continue; } add(-30 + x, y + 0.5, -22 + z, y === 4 ? 'L' : 'P', 0.95, 0.95, 0.95); }
+    const r = rng(2025); for (let n = 0; n < 70; n++) { const a = r() * Math.PI * 2, d = 19 + r() * 12, x = Math.cos(a) * d, z = Math.sin(a) * d; add(x, 0.6, z, 'K', 0.45, 0.9, 0.45); add(x, 1.4, z, ['T', 'I', 'G', 'o', 'i'][n % 5], 0.5, 0.7, 0.5); }
+    return { cams: [[[0, 10, 60], [0, 11, 0]], [[34, 9, 26], [0, 9, 0]], [[0, 34, 46], [0, 10, 0]]] };
+  },
+  gold(add) {
+    const W = 72, H = 34, mk = textMask('50', W, H);
+    for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) if (mk.m[r * W + c]) add(c - W / 2 + 0.5 + 10, H - r + 4, 0, 'Y', 0.92, 0.92, 0.9);
+    for (let x = -40; x <= 40; x += 2) for (let z = -10; z <= 50; z += 2) if (hash(x, z, 6) > 0.4) add(x, 0, z, (x + z) % 4 ? 'P' : 'W', 1.8, 0.25, 1.8);
+    return { cams: [[[4, 14, 64], [4, 20, 0]], [[-6, 18, 50], [4, 20, 0]], [[2, 22, 76], [4, 21, 0]]] };
+  }
+};
+
+const LOC = [], camPts = [], lookPts = [];
+function buildAll() {
+  STORY.forEach((s, idx) => {
+    const ox = Math.sin(idx * 1.15) * 46, oz = -idx * SPACING;
+    const items = [], extra = {};
+    const add = (x, y, z, key, sx = 0.9, sy = 0.9, sz = 0.9) => items.push({ x: x + ox, y, z: z + oz, key, sx, sy, sz });
+    const res = builders[s.id](add, extra);
+    const mesh = new THREE.InstancedMesh(BOX, MAT, items.length); mesh.frustumCulled = false;
+    const arr = mesh.instanceMatrix.array, col = new THREE.Color(), glitter = [];
+    items.forEach((it, i) => {
+      const o = i * 16; arr[o] = it.sx; arr[o + 5] = it.sy; arr[o + 10] = it.sz; arr[o + 15] = 1; arr[o + 12] = it.x; arr[o + 13] = it.y; arr[o + 14] = it.z;
+      if (it.key === 'Y') { glitter.push(i); goldAt(0.3 + hash(it.x, it.y, it.z) * 0.4, col); } else col.copy(COL[it.key] || COL.P);
+      col.multiplyScalar(0.92 + hash(it.x, it.z, it.y * 3) * 0.12); mesh.setColorAt(i, col);
+    });
+    mesh.instanceColor.needsUpdate = true; mesh.instanceMatrix.needsUpdate = true; scene.add(mesh);
+    const start = camPts.length;
+    res.cams.forEach(([p, l]) => { camPts.push(new THREE.Vector3(p[0] + ox, p[1], p[2] + oz)); lookPts.push(new THREE.Vector3(l[0] + ox, l[1], l[2] + oz)); });
+    const seed = items.map((it, i) => ({ dx: (hash(i, 1, idx) - 0.5) * 30, dy: 14 + hash(i, 2, idx) * 26, dz: (hash(i, 3, idx) - 0.5) * 30, k: 1,
+      delay: res.build === 'bottom-up' ? it.y * 0.09 + hash(i, 4, idx) * 0.35 : hash(i, 4, idx) * 1.1 + Math.hypot(it.x - ox, it.z - oz) * 0.012 }));
+    LOC.push({ s, mesh, items, seed, start, end: camPts.length - 1, glitter, assembled: true, assembling: 0, ox, oz, extra });
+  });
+  const tl = LOC.find(l => l.extra.tram);
+  if (tl) {
+    const parts = []; for (let x = 0; x < 12; x++) for (let y = 0; y < 3; y++) for (let z = 0; z < 2; z++) { let k = 'T'; if (y === 1 && x % 3) k = 'L'; if (y === 0) k = 't'; if (x === 0 || x === 11) k = y === 1 ? 'y' : 'T'; parts.push([x - 6, 0.9 + y * 0.95, z - 0.5 + 14.3, k]); }
+    const tm = new THREE.InstancedMesh(BOX, MAT, parts.length); tm.frustumCulled = false; const c = new THREE.Color(), a = tm.instanceMatrix.array;
+    parts.forEach(([x, y, z, k], i) => { const o = i * 16; a[o] = 0.95; a[o + 5] = 0.9; a[o + 10] = 0.95; a[o + 15] = 1; a[o + 12] = x; a[o + 13] = y; a[o + 14] = z + tl.oz; tm.setColorAt(i, c.copy(COL[k])); });
+    tm.instanceColor.needsUpdate = true; scene.add(tm); tl.tram = tm;
+  }
+}
+
+let curveP, curveL, NPTS, dust;
+function buildCurves() { curveP = new THREE.CatmullRomCurve3(camPts, false, 'centripetal'); curveL = new THREE.CatmullRomCurve3(lookPts, false, 'centripetal'); NPTS = camPts.length; }
+function buildDust() {
+  const n = 900, pos = new Float32Array(n * 3), ca = new Float32Array(n * 3), keys = ['T', 'y', 'i', 'g', 'o', 'P'];
+  for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - 0.5) * 90; pos[i * 3 + 1] = Math.random() * 40; pos[i * 3 + 2] = (Math.random() - 0.5) * 90; const c = COL[keys[i % keys.length]]; ca[i * 3] = c.r; ca[i * 3 + 1] = c.g; ca[i * 3 + 2] = c.b; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(ca, 3));
+  dust = new THREE.Points(g, new THREE.PointsMaterial({ size: 0.32, vertexColors: true, sizeAttenuation: true })); dust.frustumCulled = false; scene.add(dust);
+}
+
+/* ================= audio: pad, whoosh, tile clicks ================= */
+let AC = null, master = null, padGain = null, pads = [], soundOn = false, tickBudget = 0, tickWin = 0;
+const ERA = [[196, 294], [174.6, 261.6], [196, 293.7], [220, 329.6], [164.8, 246.9], [174.6, 233.1], [155.6, 233.1], [146.8, 220], [164.8, 246.9], [220, 329.6], [261.6, 392]];
+const SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5];
+function initAudio() {
+  if (AC) return; const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+  AC = new C(); master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
+  padGain = AC.createGain(); padGain.gain.value = 0; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 800; padGain.connect(lp); lp.connect(master);
+  const lfo = AC.createOscillator(); lfo.frequency.value = 0.06; const lg = AC.createGain(); lg.gain.value = 350; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
+  for (let i = 0; i < 4; i++) { const o = AC.createOscillator(); o.type = i % 2 ? 'triangle' : 'sine'; o.detune.value = (i - 1.5) * 7; const g = AC.createGain(); g.gain.value = i < 2 ? 0.5 : 0.26; o.connect(g); g.connect(padGain); o.start(); pads.push(o); }
+  setEra(cur);
+}
+function setEra(i) { if (!AC) return; const [a, b] = ERA[i] || ERA[0]; pads.forEach((o, k) => o.frequency.setTargetAtTime(k < 2 ? a / 2 * (k ? 1.003 : 1) : b / 2, AC.currentTime, 1.4)); }
+function padLevel(v) { if (padGain) padGain.gain.setTargetAtTime(v, AC.currentTime, 0.7); }
+function whoosh(len) {
+  if (!soundOn || !AC) return; const t = AC.currentTime;
+  const buf = AC.createBuffer(1, Math.floor(AC.sampleRate * len), AC.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const src = AC.createBufferSource(); src.buffer = buf; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.9;
+  f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(2400, t + len * 0.55); f.frequency.exponentialRampToValueAtTime(400, t + len);
+  const g = AC.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + len * 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  src.connect(f); f.connect(g); g.connect(master); src.start(t); src.stop(t + len);
+}
+function tick(seed) {
+  if (!soundOn || !AC) return; const t = AC.currentTime; if (t - tickWin > 0.05) { tickWin = t; tickBudget = 0; } if (tickBudget++ > 1 || Math.random() > 0.3) return;
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = SCALE[seed % SCALE.length] * (Math.random() > 0.8 ? 2 : 1);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.1);
+}
+
+/* narration: a recorded file per location wins (STORY[i].audio), browser speech otherwise */
+const synth = window.speechSynthesis; let voice = null, speakingIdx = -1, speechDone = true, audioEl = null, capOn = false;
+function pickVoice() {
+  if (!synth) return; const vs = synth.getVoices().filter(v => /^ru/i.test(v.lang)); if (!vs.length) return;
+  for (const re of [/natural|neural|online/i, /google/i, /milena.*(enhanced|premium)/i, /svetlana|dariya|irina/i, /milena/i, /yuri|pavel/i]) { const v = vs.find(x => re.test(x.name)); if (v) { voice = v; return; } }
+  voice = vs[0];
+}
+if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+const capEl = document.getElementById('caption');
+let capText = '';
+function caption(t) { capText = t || ''; capEl.textContent = capText; capEl.hidden = !(capOn && capText); }
+function stopNarration() { speakingIdx = -1; speechDone = true; if (synth) synth.cancel(); if (audioEl) { audioEl.pause(); audioEl = null; } caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(soundOn ? 0.05 : 0); }
+function narrate(i) {
+  stopNarration(); if (!soundOn) return;
+  const s = STORY[i]; const parts = s.say.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [s.say];
+  speakingIdx = i; speechDone = false; document.documentElement.classList.add('is-speaking'); padLevel(0.022);
+  const done = () => { if (speakingIdx !== i) return; speechDone = true; speakingIdx = -1; caption(''); document.documentElement.classList.remove('is-speaking'); padLevel(0.05); };
+  if (s.audio) { audioEl = new Audio(s.audio); caption(parts[0]); audioEl.onended = done; audioEl.ontimeupdate = () => { const f = audioEl.currentTime / (audioEl.duration || 1); caption(parts[Math.min(parts.length - 1, Math.floor(f * parts.length))]); }; audioEl.play().catch(done); return; }
+  if (!synth) { speechDone = true; return; }
+  let k = 0; const step = () => {
+    if (speakingIdx !== i) return; if (k >= parts.length) return done();
+    caption(parts[k]); const u = new SpeechSynthesisUtterance(parts[k]); u.lang = 'ru-RU'; if (voice) u.voice = voice; u.rate = 0.98; u.pitch = 0.95;
+    u.onend = () => { k++; setTimeout(step, 160); }; u.onerror = () => { k++; step(); }; synth.speak(u);
+  };
+  step();
+}
+
+/* ================= scroll journey: the page scroll is the camera ================= */
+let f = 0, cur = -1, sTarget = 0, sVis = 0, sPrev = 0, total = 1, segs = [], inTransit = false;
+const track = document.getElementById('track');
+const unit = () => innerHeight * 1.15;
+function buildSegments() {
+  segs = []; let acc = 0;
+  LOC.forEach((L, i) => {
+    const w = L.s.id === 'maze' ? 2.4 : L.s.id === 'fifty' ? 0.9 : 1.1;
+    segs.push({ kind: 'dwell', i, a: acc, b: acc + w }); acc += w;
+    if (i < LOC.length - 1) { segs.push({ kind: "transit", i, a: acc, b: acc + 0.6 }); acc += 0.6; }
+  });
+  total = acc + 0.35; track.style.height = Math.round(total * unit() + innerHeight) + 'px';
+}
+const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function fFromS(s) {
+  for (const g of segs) {
+    if (s > g.b && g !== segs[segs.length - 1]) continue;
+    const t = Math.max(0, Math.min(1, (s - g.a) / (g.b - g.a)));
+    if (g.kind === 'dwell') { const L = LOC[g.i]; return { f: L.start + (L.end - L.start) * t, seg: g, t }; }
+    const A = LOC[g.i], B = LOC[g.i + 1]; return { f: A.end + (B.start - A.end) * ease(t), seg: g, t };
+  }
+  return { f: 0, seg: segs[0], t: 0 };
+}
+function activeIndex(s) {
+  let best = 0, bd = 1e9;
+  for (const g of segs) if (g.kind === 'dwell') { const d = s < g.a ? g.a - s : s > g.b ? s - g.b : 0; if (d < bd) { bd = d; best = g.i; } }
+  return { i: best, near: bd < 0.3 };
+}
+const hl = document.getElementById('highlight'), hlYear = document.getElementById('hlYear'), hlLine = document.getElementById('hlLine');
+let hlTimer = 0, hlShown = -1, narrTimer = 0;
+function showHighlight(i) { if (hlShown === i && !hl.classList.contains('is-out')) return; hlShown = i; hl.classList.add('is-out'); clearTimeout(hlTimer); hlTimer = setTimeout(() => { hlYear.textContent = STORY[i].year; hlLine.innerHTML = STORY[i].line; hl.classList.remove('is-out'); }, 300); }
+function hideHighlight() { clearTimeout(hlTimer); hl.classList.add('is-out'); }
+function setLocation(i) {
+  if (i === cur) return; cur = i; setEra(i); updateRail();
+  clearTimeout(narrTimer); stopNarration();
+  if (soundOn) narrTimer = setTimeout(() => { if (cur === i) narrate(i); }, 550);
+}
+function scrollToS(s) { window.scrollTo({ top: Math.round(s * unit()), behavior: reduce.matches ? 'auto' : 'smooth' }); }
+
+const rail = document.getElementById('rail');
+STORY.forEach((s, i) => { const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button'; const name = s.year === '50' ? 'Начало' : s.year; b.textContent = name; b.setAttribute('aria-label', name); b.addEventListener('click', () => { begin(soundOn); const g = segs.find(x => x.kind === 'dwell' && x.i === i); if (g) scrollToS(g.a + 0.02); }); li.appendChild(b); rail.appendChild(li); });
+const railBtns = [...rail.querySelectorAll('button')];
+function updateRail() { railBtns.forEach((b, i) => { b.setAttribute('aria-current', String(i === cur)); b.classList.toggle('is-past', i < cur); }); }
+const startVeil = document.getElementById('startVeil'), endVeil = document.getElementById('endVeil'), hint = document.getElementById('hint');
+const soundBtn = document.getElementById('soundBtn'), ccBtn = document.getElementById('ccBtn');
+function setSound(on) { soundOn = on; soundBtn.setAttribute('aria-pressed', String(on)); if (on) { initAudio(); if (AC) AC.resume(); padLevel(0.05); } else { stopNarration(); padLevel(0); } }
+let started = false;
+function begin(withSound) {
+  if (!started) { started = true; startVeil.classList.add('is-leaving'); setTimeout(() => { startVeil.hidden = true; }, 700); hint.hidden = false; }
+  if (withSound && !soundOn) { setSound(true); if (cur >= 0) narrate(cur); }
+}
+document.getElementById('startBtn').addEventListener('click', () => begin(true));
+document.getElementById('silentBtn').addEventListener('click', () => begin(false));
+document.getElementById('againBtn').addEventListener('click', () => scrollToS(0));
+soundBtn.addEventListener('click', () => { setSound(!soundOn); if (soundOn && cur >= 0) narrate(cur); });
+ccBtn.addEventListener('click', () => { capOn = !capOn; ccBtn.setAttribute('aria-pressed', String(capOn)); caption(capText); });
+let endShown = false;
+function showEnd() { if (endShown) return; endShown = true; hideHighlight(); endVeil.hidden = false; endVeil.classList.remove('is-leaving'); }
+function hideEnd() { if (!endShown) return; endShown = false; endVeil.classList.add('is-leaving'); setTimeout(() => { if (!endShown) endVeil.hidden = true; }, 600); }
+addEventListener('scroll', () => { sTarget = scrollY / unit(); if (!started && sTarget > 0.02) begin(false); if (sTarget > 0.12) hint.hidden = true; }, { passive: true });
+
+/* ================= render loop ================= */
+const baseFov = () => innerWidth / innerHeight < 0.8 ? 72 : 55;
+function resize() { renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1)); renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.fov = baseFov(); camera.updateProjectionMatrix(); if (segs.length) { const keep = sTarget; buildSegments(); window.scrollTo(0, keep * unit()); } }
+addEventListener('resize', resize);
+function scatter(L) { const arr = L.mesh.instanceMatrix.array; L.items.forEach((it, i) => { const sd = L.seed[i], o = i * 16; sd.k = 0; arr[o] = it.sx * 0.2; arr[o + 5] = it.sy * 0.2; arr[o + 10] = it.sz * 0.2; arr[o + 12] = it.x + sd.dx; arr[o + 13] = it.y + sd.dy; arr[o + 14] = it.z + sd.dz; }); L.mesh.instanceMatrix.needsUpdate = true; L.assembled = false; }
+function assembleStep(L, now) {
+  if (!L.assembling || now < L.assembling) return;
+  const arr = L.mesh.instanceMatrix.array, t = (now - L.assembling) / 1000; let busy = false;
+  for (let i = 0; i < L.items.length; i++) {
+    const it = L.items[i], sd = L.seed[i]; let k = (t - sd.delay) / 1.4;
+    if (k < 1) busy = true; k = Math.max(0, Math.min(1, k));
+    if (sd.k === k) continue; if (k === 1) tick(i);
+    sd.k = k; const e = 1 - Math.pow(1 - k, 3), inv = 1 - e, o = i * 16, sc = 0.2 + 0.8 * e;
+    arr[o] = it.sx * sc; arr[o + 5] = it.sy * sc; arr[o + 10] = it.sz * sc;
+    arr[o + 12] = it.x + sd.dx * inv; arr[o + 13] = it.y + sd.dy * inv; arr[o + 14] = it.z + sd.dz * inv;
+  }
+  L.mesh.instanceMatrix.needsUpdate = true; if (!busy) { L.assembling = 0; L.assembled = true; }
+}
+const tmpC = new THREE.Color(), camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+let last = performance.now(), fovKick = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  sVis = reduce.matches ? sTarget : sVis + (sTarget - sVis) * (1 - Math.exp(-dt * 5));
+  const vel = Math.abs(sVis - sPrev) / Math.max(dt, 0.001); sPrev = sVis;
+  const st = fFromS(sVis); f = st.f;
+  const transit = st.seg.kind === 'transit' && st.t > 0.02 && st.t < 0.98;
+  if (transit && !inTransit && vel > 0.15) whoosh(1.8);
+  inTransit = transit;
+  const act = activeIndex(sVis);
+  if (act.near) { setLocation(act.i); showHighlight(act.i); } else hideHighlight();
+  const lastSeg = segs[segs.length - 1];
+  if (sVis > lastSeg.b - 0.04) showEnd(); else hideEnd();
+  for (const L of LOC) if (!L.assembled && !L.assembling && f > L.start - 3 && f < L.end + 1) L.assembling = now;
+  LOC.forEach(L => assembleStep(L, now));
+  const A = LOC[Math.max(0, cur)];
+  if (A && A.glitter.length && !reduce.matches) {
+    const sweep = (now / 2400) % 3;
+    for (const i of A.glitter) { const it = A.items[i], d = ((it.x - A.ox) * 0.6 + it.y * 0.8) / 40, s = 1 - Math.min(1, Math.abs(d - sweep + 1) * 2.4); goldAt(0.06 + hash(it.x, it.y, it.z) * 0.4 + Math.sin(now / 600 + i) * 0.06 + s * 0.5, tmpC); A.mesh.setColorAt(i, tmpC); }
+    A.mesh.instanceColor.needsUpdate = true;
+  }
+  const tl = LOC.find(x => x.tram); if (tl) tl.tram.position.x = tl.ox + (reduce.matches ? 0 : ((now / 110) % 120) - 60);
+  const u = Math.max(0, Math.min(1, f / (NPTS - 1)));
+  curveP.getPoint(u, camPos); curveL.getPoint(u, camLook);
+  if (!reduce.matches) { camPos.x += Math.sin(now / 2300) * 0.25; camPos.y += Math.sin(now / 1700) * 0.18; }
+  camera.position.copy(camPos); camera.lookAt(camLook);
+  const kickTarget = transit && !reduce.matches ? Math.min(16, vel * 9) : 0; fovKick += (kickTarget - fovKick) * Math.min(1, dt * 4);
+  const fov = baseFov() + fovKick;
+  if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  dust.position.set(Math.round(camPos.x / 90) * 90, 0, Math.round(camPos.z / 90) * 90);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+fontReady.then(() => {
+  buildAll(); buildCurves(); buildDust(); resize(); buildSegments();
+  sTarget = sVis = sPrev = scrollY / unit();
+  if (!reduce.matches) { LOC.forEach(L => scatter(L)); }
+  requestAnimationFrame(frame);
+  window.__museum = { LOC, segs: () => segs, unit, get f() { return f; } };
+});
+})();
+</script>
+
+</body>
+</html>
